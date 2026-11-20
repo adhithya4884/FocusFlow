@@ -1,5 +1,6 @@
 // src/App.jsx
 import React, { useState, useEffect } from 'react';
+import { Square } from 'lucide-react';
 import { useApp } from './context/AppContext';
 import { usePomodoro } from './hooks/usePomodoro';
 import Sidebar from './components/Sidebar';
@@ -8,6 +9,7 @@ import MobileNav from './components/MobileNav';
 import ZenFocusMode from './components/ZenFocusMode';
 import TaskFormModal from './components/TaskFormModal';
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
+import { AMBIENT_SOUND_OPTIONS } from './utils/audioEngine';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -25,6 +27,8 @@ export default function App() {
     setShortcutsModalOpen,
     isAmbientPlaying,
     toggleAmbientSound,
+    ambientType,
+    ambientVolume,
     toast,
     theme
   } = useApp();
@@ -142,6 +146,44 @@ export default function App() {
 
       {/* Keyboard Shortcuts Cheat-Sheet Modal */}
       <KeyboardShortcutsModal />
+
+      {/* Global Floating Mini Audio Controller (Instant 1-Click Stop from anywhere) */}
+      {isAmbientPlaying && (
+        <div className="fixed bottom-20 md:bottom-6 left-4 sm:left-6 z-40 animate-in slide-in-from-bottom-3 duration-200">
+          <div
+            className={`flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 sm:py-2.5 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all ${
+              theme === 'dark'
+                ? 'bg-slate-900/95 border-purple-500/40 text-slate-100 shadow-purple-500/10'
+                : 'bg-white/95 border-purple-300 text-slate-900 shadow-xl'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="text-xs font-bold flex items-center gap-1.5 truncate max-w-[150px] sm:max-w-none">
+                <span>{AMBIENT_SOUND_OPTIONS.find((s) => s.id === ambientType)?.icon || '🎵'}</span>
+                <span className="hidden sm:inline">
+                  {AMBIENT_SOUND_OPTIONS.find((s) => s.id === ambientType)?.label || 'Sound'}
+                </span>
+                <span className="sm:hidden">
+                  {AMBIENT_SOUND_OPTIONS.find((s) => s.id === ambientType)?.shortLabel || 'Sound'}
+                </span>
+              </span>
+              <span className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold ml-0.5">
+                {Math.round(ambientVolume * 100)}%
+              </span>
+            </div>
+
+            <button
+              onClick={toggleAmbientSound}
+              className="ml-1 px-2.5 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-1 transition-all active:scale-95 cursor-pointer shadow-xs shrink-0"
+              title="Stop Ambient Audio (M)"
+            >
+              <Square className="w-3 h-3 fill-current" />
+              <span>Stop Sound</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Floating In-App Toast Notification */}
       {toast && (

@@ -7,7 +7,9 @@ import {
   VolumeX,
   Sparkles,
   CheckCircle2,
-  ListPlus
+  ListPlus,
+  Square,
+  Play
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import CircularTimer from '../components/CircularTimer';
@@ -151,26 +153,32 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
         <div className="flex items-center gap-3">
           <button
             onClick={toggleAmbientSound}
-            className={`p-2.5 rounded-xl border transition-all ${
+            className={`px-3 py-2 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all shadow-sm active:scale-95 ${
               isAmbientPlaying
-                ? 'bg-purple-600 border-purple-500 text-white shadow-md shadow-purple-600/30'
-                : theme === 'dark'
-                ? 'bg-slate-800 border-slate-700 text-slate-400 hover:text-white'
-                : 'bg-slate-100 border-slate-200 text-slate-600'
+                ? 'bg-rose-500/15 border-rose-500/30 text-rose-600 dark:text-rose-400 hover:bg-rose-500/25'
+                : 'bg-purple-600 border-purple-500 text-white hover:bg-purple-500 shadow-md shadow-purple-600/20'
             }`}
           >
             {isAmbientPlaying ? (
-              <Volume2 className="w-4 h-4 animate-pulse" />
+              <>
+                <Square className="w-3.5 h-3.5 fill-current" />
+                <span>Turn Off Sound</span>
+              </>
             ) : (
-              <VolumeX className="w-4 h-4" />
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Play Sound</span>
+              </>
             )}
           </button>
           <div>
             <span className="text-xs font-bold block text-slate-900 dark:text-white">
-              {isAmbientPlaying ? 'Ambient Sound Playing' : 'Ambient Sound Muted'}
+              {isAmbientPlaying
+                ? `${AMBIENT_SOUND_OPTIONS.find((s) => s.id === ambientType)?.label} Playing`
+                : 'Ambient Audio Muted'}
             </span>
             <span className="text-[10px] text-slate-500 dark:text-slate-400">
-              Procedural Audio (Rain, Waves, Fire, Clock, Zen Bowl)
+              Procedural Web Audio Engine (Rain, Waves, Fire, Clock, Zen Bowl)
             </span>
           </div>
         </div>

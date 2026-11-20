@@ -54,13 +54,23 @@ export default function ZenFocusMode({ timerControl }) {
           <div className="flex items-center gap-2 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-1.5 text-xs">
             <button
               onClick={toggleAmbientSound}
-              className="text-purple-400 hover:text-purple-300"
-              title="Toggle sound"
+              className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                isAmbientPlaying
+                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30 hover:bg-rose-500/30'
+                  : 'text-purple-400 hover:text-purple-300'
+              }`}
+              title={isAmbientPlaying ? 'Turn Off Sound' : 'Play Sound'}
             >
               {isAmbientPlaying ? (
-                <Volume2 className="w-4 h-4 animate-pulse" />
+                <>
+                  <Volume2 className="w-4 h-4 animate-pulse" />
+                  <span>Stop ⏹</span>
+                </>
               ) : (
-                <VolumeX className="w-4 h-4 text-slate-500" />
+                <>
+                  <VolumeX className="w-4 h-4 text-slate-500" />
+                  <span>Play ▶</span>
+                </>
               )}
             </button>
             <select

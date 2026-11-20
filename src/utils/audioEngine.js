@@ -273,30 +273,50 @@ class AudioEngine {
     };
 
     if (resolvedType === 'clock') {
-      // 1. PENDULUM TICK-TOCK (Rhythmic wooden mechanical ticks every 1 second)
+      // 1. PENDULUM TICK-TOCK (Dual-click mechanical escapement: primary tick + micro body resonance)
       let isTick = true;
       const playTickTock = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
 
-        // Alternating pitch: 850Hz for "Tick", 620Hz for "Tock"
-        const freq = isTick ? 850 : 620;
+        // Primary click (escapement pallet tooth engagement)
+        const primaryOsc = ctx.createOscillator();
+        const primaryGain = ctx.createGain();
+        const primaryFreq = isTick ? 1250 : 920;
+
+        primaryOsc.type = 'triangle';
+        primaryOsc.frequency.setValueAtTime(primaryFreq, now);
+        primaryOsc.frequency.exponentialRampToValueAtTime(180, now + 0.025);
+
+        primaryGain.gain.setValueAtTime(0.38, now);
+        primaryGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.025);
+
+        primaryOsc.connect(primaryGain);
+        primaryGain.connect(this.ambientGain);
+
+        primaryOsc.start(now);
+        primaryOsc.stop(now + 0.03);
+
+        // Secondary micro-resonance 15ms later (wooden clock case echo)
+        const bodyOsc = ctx.createOscillator();
+        const bodyGain = ctx.createGain();
+        const bodyFreq = isTick ? 440 : 330;
+        const bodyStart = now + 0.015;
+
+        bodyOsc.type = 'sine';
+        bodyOsc.frequency.setValueAtTime(bodyFreq, bodyStart);
+        bodyOsc.frequency.exponentialRampToValueAtTime(80, bodyStart + 0.04);
+
+        bodyGain.gain.setValueAtTime(0.18, bodyStart);
+        bodyGain.gain.exponentialRampToValueAtTime(0.0001, bodyStart + 0.04);
+
+        bodyOsc.connect(bodyGain);
+        bodyGain.connect(this.ambientGain);
+
+        bodyOsc.start(bodyStart);
+        bodyOsc.stop(bodyStart + 0.045);
+
         isTick = !isTick;
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, now);
-        osc.frequency.exponentialRampToValueAtTime(140, now + 0.035);
-
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
-
-        osc.connect(gain);
-        gain.connect(this.ambientGain);
-
-        osc.start(now);
-        osc.stop(now + 0.04);
       };
 
       // Play immediately, then every 1000ms
@@ -305,58 +325,82 @@ class AudioEngine {
       this.ambientTimers.push(intervalId);
 
     } else if (resolvedType === 'waves') {
-      // 2. OCEAN WAVES & TIDE (Rhythmic swell rising and crashing every 5 seconds)
+      // 2. OCEAN WAVES & TIDE (Multi-layer surf: low sub-bass surge + airy receding foam wash)
       const waveNoise = ctx.createBufferSource();
       waveNoise.buffer = createNoiseBuffer('pink');
       waveNoise.loop = true;
 
       const waveFilter = ctx.createBiquadFilter();
-      waveFilter.type = 'lowpass';
-      waveFilter.frequency.setValueAtTime(250, ctx.currentTime);
+      waveFilter.type = 'bandpass';
+      waveFilter.Q.value = 1.2;
+      waveFilter.frequency.setValueAtTime(280, ctx.currentTime);
 
       const waveGain = ctx.createGain();
-      waveGain.gain.setValueAtTime(0.05, ctx.currentTime);
+      waveGain.gain.setValueAtTime(0.06, ctx.currentTime);
+
+      // Deep sub-bass surf surge
+      const subNoise = ctx.createBufferSource();
+      subNoise.buffer = createNoiseBuffer('brown');
+      subNoise.loop = true;
+
+      const subFilter = ctx.createBiquadFilter();
+      subFilter.type = 'lowpass';
+      subFilter.frequency.setValueAtTime(140, ctx.currentTime);
+
+      const subGain = ctx.createGain();
+      subGain.gain.setValueAtTime(0.1, ctx.currentTime);
 
       waveNoise.connect(waveFilter);
       waveFilter.connect(waveGain);
       waveGain.connect(this.ambientGain);
-      waveNoise.start();
-      activeNodes.push(waveNoise);
 
-      // Swell cycle: 5.5 seconds per breath of wave
+      subNoise.connect(subFilter);
+      subFilter.connect(subGain);
+      subGain.connect(this.ambientGain);
+
+      waveNoise.start();
+      subNoise.start();
+      activeNodes.push(waveNoise, subNoise);
+
+      // 6-second wave cycle
       const swellCycle = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
 
-        // Swell up (rising water)
+        // Wave crests up over 2.6s, washes down over 3.4s
         waveFilter.frequency.cancelScheduledValues(now);
         waveGain.gain.cancelScheduledValues(now);
+        subGain.gain.cancelScheduledValues(now);
 
-        waveFilter.frequency.setValueAtTime(220, now);
-        waveFilter.frequency.exponentialRampToValueAtTime(1200, now + 2.2); // wave crests
-        waveFilter.frequency.exponentialRampToValueAtTime(220, now + 5.2);  // wave recedes
+        waveFilter.frequency.setValueAtTime(260, now);
+        waveFilter.frequency.exponentialRampToValueAtTime(1450, now + 2.6);
+        waveFilter.frequency.exponentialRampToValueAtTime(260, now + 5.8);
 
         waveGain.gain.setValueAtTime(0.08, now);
-        waveGain.gain.linearRampToValueAtTime(0.7, now + 2.2);
-        waveGain.gain.linearRampToValueAtTime(0.08, now + 5.2);
+        waveGain.gain.linearRampToValueAtTime(0.65, now + 2.6);
+        waveGain.gain.linearRampToValueAtTime(0.08, now + 5.8);
+
+        subGain.gain.setValueAtTime(0.12, now);
+        subGain.gain.linearRampToValueAtTime(0.55, now + 2.4);
+        subGain.gain.linearRampToValueAtTime(0.12, now + 5.8);
       };
 
       swellCycle();
-      const swellInterval = setInterval(swellCycle, 5300);
+      const swellInterval = setInterval(swellCycle, 6000);
       this.ambientTimers.push(swellInterval);
 
     } else if (resolvedType === 'fire') {
-      // 3. CRACKLING CAMPFIRE (Warm low fire glow + organic wood snaps and crackles)
+      // 3. CRACKLING CAMPFIRE (Warm low fireplace hum + organic wood pops and crackling ember bursts)
       const fireHum = ctx.createBufferSource();
       fireHum.buffer = createNoiseBuffer('brown');
       fireHum.loop = true;
 
       const fireFilter = ctx.createBiquadFilter();
       fireFilter.type = 'lowpass';
-      fireFilter.frequency.setValueAtTime(220, ctx.currentTime);
+      fireFilter.frequency.setValueAtTime(280, ctx.currentTime);
 
       const fireGain = ctx.createGain();
-      fireGain.gain.setValueAtTime(0.25, ctx.currentTime);
+      fireGain.gain.setValueAtTime(0.28, ctx.currentTime);
 
       fireHum.connect(fireFilter);
       fireFilter.connect(fireGain);
@@ -364,82 +408,101 @@ class AudioEngine {
       fireHum.start();
       activeNodes.push(fireHum);
 
-      // Random snapping crackles (high frequency wooden bursts)
+      // Organic wood crackle bursts
       const spawnCrackle = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
 
-        // Fast burst crackle
+        // High frequency filtered burst
         const crackleOsc = ctx.createOscillator();
         const crackleGain = ctx.createGain();
-        const snapFreq = 2200 + Math.random() * 2800;
+        const snapFreq = 2600 + Math.random() * 2400;
 
-        crackleOsc.type = 'square';
+        crackleOsc.type = 'triangle';
         crackleOsc.frequency.setValueAtTime(snapFreq, now);
 
-        crackleGain.gain.setValueAtTime(0.08 + Math.random() * 0.12, now);
-        crackleGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+        crackleGain.gain.setValueAtTime(0.1 + Math.random() * 0.15, now);
+        crackleGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
 
         crackleOsc.connect(crackleGain);
         crackleGain.connect(this.ambientGain);
 
         crackleOsc.start(now);
-        crackleOsc.stop(now + 0.035);
+        crackleOsc.stop(now + 0.025);
 
-        // Schedule next random crackle between 60ms and 380ms
-        const nextCrackle = 60 + Math.random() * 320;
+        // Occasional hollow wood pop (splitting wood)
+        if (Math.random() < 0.25) {
+          const popOsc = ctx.createOscillator();
+          const popGain = ctx.createGain();
+          popOsc.type = 'sine';
+          popOsc.frequency.setValueAtTime(220 + Math.random() * 80, now);
+          popGain.gain.setValueAtTime(0.12, now);
+          popGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+          popOsc.connect(popGain);
+          popGain.connect(this.ambientGain);
+          popOsc.start(now);
+          popOsc.stop(now + 0.045);
+        }
+
+        const nextCrackle = 50 + Math.random() * 280;
         const timerId = setTimeout(spawnCrackle, nextCrackle);
         this.ambientTimers.push(timerId);
       };
       spawnCrackle();
 
     } else if (resolvedType === 'rain') {
-      // 4. RAIN & THUNDER (Steady rain wash + droplet plips + distant rolling thunder)
+      // 4. RAIN & THUNDER (Velvety soft rainfall wash + authentic droplet pings + distant rolling thunder)
       const rainSource = ctx.createBufferSource();
       rainSource.buffer = createNoiseBuffer('pink');
       rainSource.loop = true;
 
-      const rainFilter = ctx.createBiquadFilter();
-      rainFilter.type = 'lowpass';
-      rainFilter.frequency.setValueAtTime(1200, ctx.currentTime);
+      // Dual-filter for soothing rain texture (cuts mud below 180Hz, softens harsh highs above 1400Hz)
+      const rainLowFilter = ctx.createBiquadFilter();
+      rainLowFilter.type = 'lowpass';
+      rainLowFilter.frequency.setValueAtTime(1400, ctx.currentTime);
+
+      const rainHighFilter = ctx.createBiquadFilter();
+      rainHighFilter.type = 'highpass';
+      rainHighFilter.frequency.setValueAtTime(180, ctx.currentTime);
 
       const rainGain = ctx.createGain();
-      rainGain.gain.setValueAtTime(0.45, ctx.currentTime);
+      rainGain.gain.setValueAtTime(0.42, ctx.currentTime);
 
-      rainSource.connect(rainFilter);
-      rainFilter.connect(rainGain);
+      rainSource.connect(rainLowFilter);
+      rainLowFilter.connect(rainHighFilter);
+      rainHighFilter.connect(rainGain);
       rainGain.connect(this.ambientGain);
       rainSource.start();
       activeNodes.push(rainSource);
 
-      // Distinct water droplets
+      // Distinct water droplets with varying acoustic pitch
       const spawnDroplet = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
         const dropOsc = ctx.createOscillator();
         const dropGain = ctx.createGain();
 
-        const startFreq = 1600 + Math.random() * 800;
+        const startFreq = 1400 + Math.random() * 1100;
         dropOsc.type = 'sine';
         dropOsc.frequency.setValueAtTime(startFreq, now);
-        dropOsc.frequency.exponentialRampToValueAtTime(startFreq * 0.55, now + 0.07);
+        dropOsc.frequency.exponentialRampToValueAtTime(startFreq * 0.48, now + 0.055);
 
-        dropGain.gain.setValueAtTime(0.09, now);
-        dropGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+        dropGain.gain.setValueAtTime(0.08 + Math.random() * 0.04, now);
+        dropGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.055);
 
         dropOsc.connect(dropGain);
         dropGain.connect(this.ambientGain);
 
         dropOsc.start(now);
-        dropOsc.stop(now + 0.08);
+        dropOsc.stop(now + 0.065);
 
-        const nextTime = 160 + Math.random() * 450;
+        const nextTime = 120 + Math.random() * 380;
         const timerId = setTimeout(spawnDroplet, nextTime);
         this.ambientTimers.push(timerId);
       };
       spawnDroplet();
 
-      // Distant rolling thunder every ~18s
+      // Deep rolling thunder with smooth multi-second rumble
       const spawnThunder = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
@@ -448,35 +511,47 @@ class AudioEngine {
 
         const thunderFilter = ctx.createBiquadFilter();
         thunderFilter.type = 'lowpass';
-        thunderFilter.frequency.setValueAtTime(130, now);
+        thunderFilter.frequency.setValueAtTime(110, now);
+        thunderFilter.frequency.linearRampToValueAtTime(160, now + 1.2);
+        thunderFilter.frequency.exponentialRampToValueAtTime(90, now + 4.5);
 
         const tGain = ctx.createGain();
         tGain.gain.setValueAtTime(0.001, now);
-        tGain.gain.linearRampToValueAtTime(0.4, now + 1.2);
-        tGain.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
+        tGain.gain.linearRampToValueAtTime(0.45, now + 1.4);
+        tGain.gain.exponentialRampToValueAtTime(0.0001, now + 4.8);
 
         thunderSource.connect(thunderFilter);
         thunderFilter.connect(tGain);
         tGain.connect(this.ambientGain);
 
         thunderSource.start(now);
-        thunderSource.stop(now + 4.6);
+        thunderSource.stop(now + 5.0);
 
-        const nextThunder = 15000 + Math.random() * 12000;
+        const nextThunder = 14000 + Math.random() * 12000;
         const timerId = setTimeout(spawnThunder, nextThunder);
         this.ambientTimers.push(timerId);
       };
-      const thunderTimer = setTimeout(spawnThunder, 3000);
+      const thunderTimer = setTimeout(spawnThunder, 2500);
       this.ambientTimers.push(thunderTimer);
 
     } else {
-      // 5. 'singing_bowl' - TIBETAN SINGING BOWL (Harmonic brass resonance + soft mallet strike)
-      const bowlFundamental = 261.63; // C4
+      // 5. 'singing_bowl' - TIBETAN SINGING BOWL (Acoustic rotary shimmer + multi-harmonic mallet strikes)
+      const bowlFundamental = 261.63; // C4 (261.6Hz)
       const harmonics = [1, 2.76, 5.4, 8.9];
 
       const bowlGain = ctx.createGain();
-      bowlGain.gain.setValueAtTime(0.3, ctx.currentTime);
+      bowlGain.gain.setValueAtTime(0.28, ctx.currentTime);
       bowlGain.connect(this.ambientGain);
+
+      // Acoustic rotary amplitude modulation (LFO emulation of circular wand vibration)
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.setValueAtTime(0.32, ctx.currentTime); // ~0.32Hz slow rotary breathing
+      lfoGain.gain.setValueAtTime(0.08, ctx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(bowlGain.gain);
+      lfo.start();
+      activeNodes.push(lfo);
 
       harmonics.forEach((h, idx) => {
         const osc = ctx.createOscillator();
@@ -485,7 +560,7 @@ class AudioEngine {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(bowlFundamental * h, ctx.currentTime);
 
-        noteGain.gain.setValueAtTime(0.25 / Math.pow(1.5, idx), ctx.currentTime);
+        noteGain.gain.setValueAtTime(0.22 / Math.pow(1.5, idx), ctx.currentTime);
 
         osc.connect(noteGain);
         noteGain.connect(bowlGain);
@@ -494,26 +569,36 @@ class AudioEngine {
         activeNodes.push(osc);
       });
 
-      // Gentle mallet chime every 8 seconds
+      // Harmonic mallet bell strike every 7.5 seconds
       const strikeBowl = () => {
         if (!this.currentAmbientType) return;
         const now = ctx.currentTime;
+
+        // C5 strike (523Hz)
         const strikeOsc = ctx.createOscillator();
         const strikeGain = ctx.createGain();
-
         strikeOsc.type = 'sine';
-        strikeOsc.frequency.setValueAtTime(523.25, now); // C5 bell strike
-
-        strikeGain.gain.setValueAtTime(0.2, now);
-        strikeGain.gain.exponentialRampToValueAtTime(0.0001, now + 4.0);
-
+        strikeOsc.frequency.setValueAtTime(523.25, now);
+        strikeGain.gain.setValueAtTime(0.22, now);
+        strikeGain.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
         strikeOsc.connect(strikeGain);
         strikeGain.connect(this.ambientGain);
-
         strikeOsc.start(now);
-        strikeOsc.stop(now + 4.2);
+        strikeOsc.stop(now + 4.6);
 
-        const nextStrike = 7000 + Math.random() * 4000;
+        // High crystal overtone C6 (1046.5Hz)
+        const overtoneOsc = ctx.createOscillator();
+        const overtoneGain = ctx.createGain();
+        overtoneOsc.type = 'sine';
+        overtoneOsc.frequency.setValueAtTime(1046.5, now);
+        overtoneGain.gain.setValueAtTime(0.09, now);
+        overtoneGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.8);
+        overtoneOsc.connect(overtoneGain);
+        overtoneGain.connect(this.ambientGain);
+        overtoneOsc.start(now);
+        overtoneOsc.stop(now + 3.0);
+
+        const nextStrike = 7000 + Math.random() * 3500;
         const timerId = setTimeout(strikeBowl, nextStrike);
         this.ambientTimers.push(timerId);
       };

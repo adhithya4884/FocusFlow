@@ -56,10 +56,10 @@ export default function Sidebar() {
           <Timer className="w-5 h-5 animate-pulse" />
         </div>
         <div>
-          <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-purple-400 via-indigo-300 to-white bg-clip-text text-transparent">
+          <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-purple-600 via-indigo-600 to-slate-900 dark:from-purple-400 dark:via-indigo-300 dark:to-white bg-clip-text text-transparent">
             FocusFlow
           </span>
-          <span className="block text-[10px] font-semibold tracking-wider uppercase text-purple-400">
+          <span className="block text-[10px] font-semibold tracking-wider uppercase text-purple-600 dark:text-purple-400">
             Pro Productivity
           </span>
         </div>
