@@ -52,12 +52,12 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
             <span>Productivity Dashboard</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             {greeting}, ready to make today count?
           </h2>
 
-          <p className="mt-2 text-sm text-slate-400">
-            You've logged <span className="font-semibold text-purple-400">{formatMinutesHuman(aggregateStats.todayFocusMinutes)}</span> of deep work today across <span className="font-semibold text-purple-400">{aggregateStats.todaySessions} sessions</span>.
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+            You've logged <span className="font-semibold text-purple-600 dark:text-purple-400">{formatMinutesHuman(aggregateStats.todayFocusMinutes)}</span> of deep work today across <span className="font-semibold text-purple-600 dark:text-purple-400">{aggregateStats.todaySessions} sessions</span>.
           </p>
 
           <div className="mt-6 flex items-center gap-3 flex-wrap">
@@ -109,7 +109,7 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
         />
 
         {/* Current Streak with Interactive Hover Card */}
-        <StreakTooltipCard>
+        <StreakTooltipCard position="dashboard-stat" className="w-full block">
           <div className="w-full">
             <StatCard
               title="Current Streak (Hover)"
@@ -149,12 +149,12 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <CheckSquare className="w-4 h-4 text-purple-400" />
-                <h3 className="text-sm font-bold tracking-tight">Today's Focus Tasks</h3>
+                <CheckSquare className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Today's Focus Tasks</h3>
               </div>
               <button
                 onClick={() => setActiveTab('tasks')}
-                className="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1"
+                className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 flex items-center gap-1"
               >
                 <span>View all</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -168,12 +168,12 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
                   <TaskCard key={task.id} task={task} onEdit={onOpenTaskModal} />
                 ))
               ) : (
-                <div className="py-8 text-center text-slate-400">
+                <div className="py-8 text-center text-slate-500 dark:text-slate-400">
                   <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500 mb-2 stroke-1" />
                   <p className="text-xs">All pending tasks are complete!</p>
                   <button
                     onClick={() => onOpenTaskModal()}
-                    className="mt-3 text-xs font-semibold text-purple-400 hover:underline"
+                    className="mt-3 text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
                   >
                     + Create a new task
                   </button>
@@ -185,12 +185,12 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
           {/* Daily Goal Mini Card */}
           <div className="mt-6 pt-4 border-t border-inherit">
             <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
-              <span className="text-slate-400">Daily Session Goal</span>
-              <span className="font-mono font-bold text-purple-400">
+              <span className="text-slate-500 dark:text-slate-400">Daily Session Goal</span>
+              <span className="font-mono font-bold text-purple-600 dark:text-purple-400">
                 {aggregateStats.todaySessions} / {settings.dailyGoalSessions}
               </span>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2 overflow-hidden">
               <div
                 className="h-full bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full transition-all duration-500"
                 style={{ width: `${goalProgress}%` }}

@@ -58,10 +58,10 @@ export default function Tasks({ onOpenTaskModal }) {
       {/* Top Header & New Task Button */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
             Task Management
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
             Organize priorities, estimate Pomodoros, and track completion progress
           </p>
         </div>
@@ -101,13 +101,13 @@ export default function Tasks({ onOpenTaskModal }) {
           </div>
 
           {/* Status Filter Pills */}
-          <div className="flex items-center rounded-xl p-1 border border-inherit bg-slate-800/30 text-xs">
+          <div className="flex items-center rounded-xl p-1 border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/30 text-xs">
             <button
               onClick={() => setStatusFilter('all')}
               className={`px-3 py-1 rounded-lg font-semibold transition-all ${
                 statusFilter === 'all'
                   ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white'
               }`}
             >
               All ({tasks.length})
@@ -117,7 +117,7 @@ export default function Tasks({ onOpenTaskModal }) {
               className={`px-3 py-1 rounded-lg font-semibold transition-all ${
                 statusFilter === 'pending'
                   ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white'
               }`}
             >
               Pending ({pendingCount})
@@ -127,7 +127,7 @@ export default function Tasks({ onOpenTaskModal }) {
               className={`px-3 py-1 rounded-lg font-semibold transition-all ${
                 statusFilter === 'completed'
                   ? 'bg-purple-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-purple-600 dark:hover:text-white'
               }`}
             >
               Done ({completedCount})

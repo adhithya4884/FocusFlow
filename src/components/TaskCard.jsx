@@ -72,7 +72,9 @@ export default function TaskCard({ task, onEdit }) {
           <div className="flex items-center gap-2 flex-wrap">
             <h4
               className={`text-sm font-semibold truncate ${
-                task.completed ? 'line-through text-slate-500' : ''
+                task.completed
+                  ? 'line-through text-slate-400 dark:text-slate-500'
+                  : 'text-slate-900 dark:text-white'
               }`}
             >
               {task.title}
@@ -106,18 +108,18 @@ export default function TaskCard({ task, onEdit }) {
           </div>
 
           {task.description && (
-            <p className="mt-1 text-xs text-slate-400 line-clamp-2">
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 line-clamp-2">
               {task.description}
             </p>
           )}
 
           {/* Progress bar & metadata */}
-          <div className="mt-3 flex items-center justify-between text-xs text-slate-400 flex-wrap gap-2">
+          <div className="mt-3 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 flex-wrap gap-2">
             <div className="flex items-center gap-3">
               {/* Pomodoro count */}
               <div className="flex items-center gap-1 text-[11px] font-mono">
                 <span>🍅</span>
-                <span className="font-semibold text-slate-200">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
                   {task.completedPomodoros || 0}/{task.estimatedPomodoros || 1}
                 </span>
               </div>
@@ -125,7 +127,7 @@ export default function TaskCard({ task, onEdit }) {
               {/* Due Date if set */}
               {task.dueDate && (
                 <div className="flex items-center gap-1 text-[11px]">
-                  <Calendar className="w-3 h-3 text-slate-500" />
+                  <Calendar className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                   <span>{task.dueDate}</span>
                 </div>
               )}
@@ -140,7 +142,7 @@ export default function TaskCard({ task, onEdit }) {
                   className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
                     isCurrentActive
                       ? 'bg-purple-600 text-white'
-                      : 'bg-purple-500/15 text-purple-300 hover:bg-purple-500/25 border border-purple-500/30'
+                      : 'bg-purple-50 dark:bg-purple-500/15 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/25 border border-purple-200 dark:border-purple-500/30'
                   }`}
                   title="Focus on this task in Timer"
                 >
@@ -152,7 +154,7 @@ export default function TaskCard({ task, onEdit }) {
               {/* Edit button */}
               <button
                 onClick={() => onEdit(task)}
-                className="p-1 rounded-lg hover:bg-slate-700/40 text-slate-400 hover:text-slate-200"
+                className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/40 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
                 title="Edit task"
               >
                 <Edit2 className="w-3.5 h-3.5" />
@@ -161,7 +163,7 @@ export default function TaskCard({ task, onEdit }) {
               {/* Delete button */}
               <button
                 onClick={() => deleteTask(task.id)}
-                className="p-1 rounded-lg hover:bg-rose-500/20 text-slate-400 hover:text-rose-400"
+                className="p-1 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-500/20 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400"
                 title="Delete task"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -170,7 +172,7 @@ export default function TaskCard({ task, onEdit }) {
           </div>
 
           {/* Pomodoro Progress Bar */}
-          <div className="mt-2.5 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div className="mt-2.5 w-full bg-slate-200 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-300 ${
                 task.completed ? 'bg-emerald-500' : 'bg-purple-500'

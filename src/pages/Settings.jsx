@@ -25,7 +25,7 @@ import {
   requestNotificationPermission,
   sendBrowserNotification
 } from '../utils/notifications';
-import { audioEngine } from '../utils/audioEngine';
+import { audioEngine, AMBIENT_SOUND_OPTIONS } from '../utils/audioEngine';
 
 export default function Settings() {
   const {
@@ -48,14 +48,6 @@ export default function Settings() {
 
   const fileInputRef = useRef(null);
   const [notificationPerm, setNotificationPerm] = useState(getNotificationPermission);
-
-  const ambientOptions = [
-    { id: 'rain', label: '🌧️ Rain & Distant Thunder' },
-    { id: 'forest', label: '🌲 Forest Birds & Breeze' },
-    { id: 'cafe', label: '☕ Cozy Cafe Ambience' },
-    { id: 'binaural', label: '🧘 40Hz Focus Beats & Drone' },
-    { id: 'brown', label: '🌌 Cosmic Brown Noise' }
-  ];
 
   const handleSettingChange = (field, value) => {
     setSettings(prev => ({ ...prev, [field]: value }));
@@ -104,10 +96,10 @@ export default function Settings() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-300">
       <div>
-        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           Settings & Preferences
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
           Customize timers, procedural audio soundscapes, daily targets, and manage sample data
         </p>
       </div>
@@ -121,8 +113,8 @@ export default function Settings() {
         }`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Timer className="w-5 h-5 text-purple-400" />
-          <h3 className="text-sm font-bold tracking-tight">Timer Intervals & Durations</h3>
+          <Timer className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Timer Intervals & Durations</h3>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -231,15 +223,17 @@ export default function Settings() {
       >
         <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <Volume2 className="w-5 h-5 text-indigo-400" />
-            <h3 className="text-sm font-bold tracking-tight">Procedural Ambient Soundscapes (100% Offline)</h3>
+            <Volume2 className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
+            <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Procedural Ambient Soundscapes (100% Offline)</h3>
           </div>
           <button
             onClick={toggleAmbientSound}
             className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
               isAmbientPlaying
                 ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                : theme === 'dark'
+                ? 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
             }`}
           >
             {isAmbientPlaying ? (
@@ -262,7 +256,7 @@ export default function Settings() {
 
         {/* Sound Selection Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
-          {ambientOptions.map((opt) => (
+          {AMBIENT_SOUND_OPTIONS.map((opt) => (
             <button
               key={opt.id}
               onClick={() => {
@@ -271,13 +265,18 @@ export default function Settings() {
               }}
               className={`p-3 rounded-xl border text-left text-xs font-semibold flex items-center justify-between transition-all ${
                 ambientType === opt.id
-                  ? 'bg-purple-500/15 border-purple-500 text-purple-200 shadow-sm'
-                  : 'border-inherit bg-slate-800/30 text-slate-400 hover:text-white hover:bg-slate-800/60'
+                  ? 'bg-purple-500/15 border-purple-500 text-purple-700 dark:text-purple-200 shadow-sm'
+                  : theme === 'dark'
+                  ? 'border-slate-800 bg-slate-800/40 text-slate-300 hover:text-white hover:bg-slate-800/70'
+                  : 'border-slate-200 bg-slate-50 text-slate-700 hover:text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <span>{opt.label}</span>
+              <div>
+                <span className="block font-bold">{opt.label}</span>
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 block mt-0.5 line-clamp-1">{opt.desc}</span>
+              </div>
               {ambientType === opt.id && isAmbientPlaying && (
-                <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+                <span className="w-2 h-2 rounded-full bg-purple-500 animate-ping shrink-0 ml-2" />
               )}
             </button>
           ))}
@@ -310,8 +309,8 @@ export default function Settings() {
         }`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Bell className="w-5 h-5 text-purple-400" />
-          <h3 className="text-sm font-bold tracking-tight">Completion Chimes & Notifications</h3>
+          <Bell className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+          <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Completion Chimes & Notifications</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -319,8 +318,8 @@ export default function Settings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold block">Session Finish Chime</span>
-                <span className="text-[11px] text-slate-400">Play chime when focus or break concludes</span>
+                <span className="text-xs font-semibold block text-slate-900 dark:text-white">Session Finish Chime</span>
+                <span className="text-[11px] text-slate-500 dark:text-slate-400">Play chime when focus or break concludes</span>
               </div>
               <input
                 type="checkbox"
@@ -519,10 +518,10 @@ export default function Settings() {
         }`}
       >
         <div className="flex items-center gap-2 mb-2">
-          <Database className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-sm font-bold tracking-tight">Data Management & Sample Data Controls</h3>
+          <Database className="w-5 h-5 text-cyan-500 dark:text-cyan-400" />
+          <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Data Management & Sample Data Controls</h3>
         </div>
-        <p className="text-xs text-slate-400 mb-6">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mb-6">
           Backup your data, re-seed November sample sessions for testing, or wipe all sample data clean whenever you want:
         </p>
 
@@ -530,20 +529,20 @@ export default function Settings() {
           {/* Reload Sample Data */}
           <button
             onClick={loadDemoData}
-            className="p-3.5 rounded-xl border border-purple-500/40 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+            className="p-3.5 rounded-xl border border-purple-300 dark:border-purple-500/40 bg-purple-50 dark:bg-purple-500/10 text-purple-700 dark:text-purple-300 hover:bg-purple-100 dark:hover:bg-purple-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
             title="Populate November sessions, tasks, and streaks to test all features"
           >
-            <Sparkles className="w-5 h-5 text-purple-400" />
+            <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <span>Reload Sample Data</span>
           </button>
 
           {/* Clear Sample Data (Clean Slate) */}
           <button
             onClick={handleClearSampleConfirm}
-            className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+            className="p-3.5 rounded-xl border border-rose-300 dark:border-rose-500/30 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300 hover:bg-rose-100 dark:hover:bg-rose-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
             title="Wipe sample data to start with an empty clean slate"
           >
-            <Trash2 className="w-5 h-5 text-rose-400" />
+            <Trash2 className="w-5 h-5 text-rose-600 dark:text-rose-400" />
             <span>Clear Sample Data</span>
           </button>
 
@@ -551,10 +550,10 @@ export default function Settings() {
           <button
             onClick={handleExportData}
             className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 ${
-              theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              theme === 'dark' ? 'bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
             }`}
           >
-            <Download className="w-5 h-5 text-purple-400" />
+            <Download className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <span>Export Backup (JSON)</span>
           </button>
 
@@ -562,10 +561,10 @@ export default function Settings() {
           <button
             onClick={() => fileInputRef.current?.click()}
             className={`p-3.5 rounded-xl border text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 ${
-              theme === 'dark' ? 'bg-slate-800/80 border-slate-700 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
+              theme === 'dark' ? 'bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-800' : 'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100'
             }`}
           >
-            <Upload className="w-5 h-5 text-indigo-400" />
+            <Upload className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <span>Import Data (JSON)</span>
           </button>
           <input

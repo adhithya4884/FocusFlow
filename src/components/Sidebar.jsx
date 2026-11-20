@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import StreakTooltipCard from './StreakTooltipCard';
+import { AMBIENT_SOUND_OPTIONS } from '../utils/audioEngine';
 
 export default function Sidebar() {
   const {
@@ -66,7 +67,7 @@ export default function Sidebar() {
 
       {/* Streak Badge Pill with Hover Pop-up Card */}
       <div className="px-5 py-4">
-        <StreakTooltipCard>
+        <StreakTooltipCard position="sidebar-flyout" className="w-full block">
           <div
             className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all hover:scale-[1.02] ${
               streak.current > 0
@@ -78,19 +79,19 @@ export default function Sidebar() {
             title="Hover to view weekly & monthly streak details"
           >
             <div className="flex items-center gap-2.5">
-              <div className={`p-1.5 rounded-lg ${streak.current > 0 ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400'}`}>
+              <div className={`p-1.5 rounded-lg ${streak.current > 0 ? 'bg-amber-500/20 text-amber-500 dark:text-amber-400' : 'text-slate-400'}`}>
                 <Flame className={`w-4 h-4 ${streak.current > 0 ? 'fill-amber-400 animate-bounce' : ''}`} />
               </div>
               <div>
-                <div className="text-xs font-semibold text-slate-100 dark:text-slate-200">
+                <div className="text-xs font-semibold text-slate-900 dark:text-slate-200">
                   {streak.current} Day Streak
                 </div>
-                <div className="text-[10px] text-slate-400">
+                <div className="text-[10px] text-slate-500 dark:text-slate-400">
                   Hover for details
                 </div>
               </div>
             </div>
-            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400">
               {streak.longest} max
             </span>
           </div>
@@ -110,8 +111,8 @@ export default function Sidebar() {
                 isActive
                   ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/20'
                   : theme === 'dark'
-                  ? 'hover:bg-slate-800/60 hover:text-white'
-                  : 'hover:bg-slate-100 hover:text-slate-900'
+                  ? 'text-slate-300 hover:bg-slate-800/60 hover:text-white'
+                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }`}
             >
               <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
@@ -130,34 +131,26 @@ export default function Sidebar() {
           onClick={toggleAmbientSound}
           className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-colors ${
             isAmbientPlaying
-              ? 'bg-purple-500/15 border-purple-500/30 text-purple-300'
+              ? 'bg-purple-500/15 border-purple-500/30 text-purple-700 dark:text-purple-300'
               : theme === 'dark'
               ? 'bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200'
               : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900'
           }`}
-          title="Toggle ambient background soundscape (Rain/Birds/Cafe/Waves)"
+          title="Toggle ambient background soundscape (Rain/Waves/Fire/Clock/Zen Bowl)"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 truncate mr-2">
             {isAmbientPlaying ? (
-              <Volume2 className="w-4 h-4 text-purple-400 animate-pulse" />
+              <Volume2 className="w-4 h-4 text-purple-500 animate-pulse shrink-0" />
             ) : (
-              <VolumeX className="w-4 h-4" />
+              <VolumeX className="w-4 h-4 shrink-0" />
             )}
             <span className="truncate">
               {isAmbientPlaying
-                ? ambientType === 'rain'
-                  ? '🌧️ Rain Playing'
-                  : ambientType === 'forest'
-                  ? '🌲 Birds Playing'
-                  : ambientType === 'cafe'
-                  ? '☕ Cafe Playing'
-                  : ambientType === 'binaural'
-                  ? '🧘 40Hz Playing'
-                  : '🌌 Cosmic Playing'
+                ? AMBIENT_SOUND_OPTIONS.find((s) => s.id === ambientType)?.shortLabel || 'Sound Playing'
                 : 'Ambient Audio'}
             </span>
           </div>
-          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isAmbientPlaying ? 'bg-purple-500/30 text-purple-200' : 'bg-slate-700/50 text-slate-400'}`}>
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${isAmbientPlaying ? 'bg-purple-500/25 text-purple-700 dark:text-purple-200 font-mono' : 'bg-slate-200 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400'}`}>
             {isAmbientPlaying ? 'ON' : 'OFF'}
           </span>
         </button>

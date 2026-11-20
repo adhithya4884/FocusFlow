@@ -1,4 +1,5 @@
 // src/utils/notifications.js
+import { audioEngine } from './audioEngine';
 
 /**
  * Checks if browser supports notifications
@@ -30,9 +31,16 @@ export async function requestNotificationPermission() {
 }
 
 /**
- * Sends a browser notification if permission is granted
+ * Sends a browser notification and plays a distinct audible notification chime
  */
 export function sendBrowserNotification(title, options = {}) {
+  // Always trigger the notification audio sound
+  try {
+    audioEngine.playNotificationSound(0.75);
+  } catch (e) {
+    console.warn('Audio chime failed:', e);
+  }
+
   if (!isNotificationSupported() || Notification.permission !== 'granted') {
     return null;
   }

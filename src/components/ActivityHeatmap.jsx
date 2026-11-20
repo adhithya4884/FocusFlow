@@ -49,33 +49,33 @@ export default function ActivityHeatmap() {
             <Calendar className="w-3 h-3" />
             <span>Monthly Habit Tracker</span>
           </div>
-          <h3 className="text-base sm:text-lg font-extrabold tracking-tight">
+          <h3 className="text-base sm:text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
             {monthName} {year} Focus Activity Matrix
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             Daily focus density and consistency overview for the current month
           </p>
         </div>
 
         {/* Month Summary KPI Badges */}
         <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          <div className="px-3 py-1.5 rounded-xl border border-inherit bg-slate-800/30 text-left">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Focus</span>
-            <span className="font-mono font-extrabold text-sm text-purple-400">
+          <div className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/30 text-left">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">Total Focus</span>
+            <span className="font-mono font-extrabold text-sm text-purple-600 dark:text-purple-400">
               {summary.totalHours} hrs
             </span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl border border-inherit bg-slate-800/30 text-left">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Active Days</span>
-            <span className="font-mono font-extrabold text-sm text-indigo-400">
+          <div className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/30 text-left">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">Active Days</span>
+            <span className="font-mono font-extrabold text-sm text-indigo-600 dark:text-indigo-400">
               {summary.activeDays} / {summary.daysElapsed}
             </span>
           </div>
 
-          <div className="px-3 py-1.5 rounded-xl border border-inherit bg-slate-800/30 text-left">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Consistency</span>
-            <span className="font-mono font-extrabold text-sm text-emerald-400">
+          <div className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/30 text-left">
+            <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 block">Consistency</span>
+            <span className="font-mono font-extrabold text-sm text-emerald-600 dark:text-emerald-400">
               {summary.consistencyRate}%
             </span>
           </div>
@@ -87,7 +87,7 @@ export default function ActivityHeatmap() {
         {weekDays.map((wDay, idx) => (
           <div
             key={idx}
-            className="text-[11px] font-bold uppercase tracking-wider text-slate-400"
+            className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400"
           >
             {wDay}
           </div>
@@ -100,7 +100,7 @@ export default function ActivityHeatmap() {
         {Array.from({ length: leadingBlanks }).map((_, bIdx) => (
           <div
             key={`blank-${bIdx}`}
-            className="aspect-square rounded-xl border border-dashed border-slate-800/30 opacity-20 pointer-events-none"
+            className="aspect-square rounded-xl border border-dashed border-slate-200 dark:border-slate-800/30 opacity-40 pointer-events-none"
           />
         ))}
 
@@ -110,11 +110,11 @@ export default function ActivityHeatmap() {
             key={`day-${day.dayNumber}`}
             className={`group relative aspect-square rounded-xl border flex flex-col items-center justify-between p-1.5 sm:p-2 cursor-pointer transition-all duration-150 hover:scale-105 hover:z-20 ${
               day.isFuture
-                ? 'border-dashed border-slate-800/60 text-slate-600 bg-slate-900/20'
+                ? 'border-dashed border-slate-200 dark:border-slate-800/60 text-slate-400 dark:text-slate-600 bg-slate-50 dark:bg-slate-900/20'
                 : palette[day.intensity]
             } ${
               day.isToday
-                ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-slate-950 font-black'
+                ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950 font-black'
                 : ''
             }`}
           >

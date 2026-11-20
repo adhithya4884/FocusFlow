@@ -15,6 +15,7 @@ import {
 import { useApp } from '../context/AppContext';
 import { formatSecondsToTime, formatDisplayDate } from '../utils/dateUtils';
 import StreakTooltipCard from './StreakTooltipCard';
+import { AMBIENT_SOUND_OPTIONS } from '../utils/audioEngine';
 
 export default function Navbar({ timerControl }) {
   const {
@@ -42,14 +43,6 @@ export default function Navbar({ timerControl }) {
     achievements: 'Streaks & Achievements',
     settings: 'Settings & Preferences'
   };
-
-  const ambientOptions = [
-    { id: 'rain', label: '🌧️ Rain & Thunder' },
-    { id: 'forest', label: '🌲 Forest Birds' },
-    { id: 'cafe', label: '☕ Cozy Cafe' },
-    { id: 'binaural', label: '🧘 40Hz Focus Waves' },
-    { id: 'brown', label: '🌌 Cosmic Brown Noise' }
-  ];
 
   const isTimerRunning = timerControl?.isRunning;
   const showMiniTimer = isTimerRunning && activeTab !== 'timer';
@@ -139,7 +132,7 @@ export default function Navbar({ timerControl }) {
                 Select Ambient Sound
               </span>
               <div className="space-y-1">
-                {ambientOptions.map((opt) => (
+                {AMBIENT_SOUND_OPTIONS.map((opt) => (
                   <button
                     key={opt.id}
                     onClick={() => {
@@ -150,7 +143,7 @@ export default function Navbar({ timerControl }) {
                     className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center justify-between transition-colors ${
                       ambientType === opt.id
                         ? 'bg-purple-600 text-white'
-                        : 'text-slate-300 hover:bg-slate-800/60'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/60'
                     }`}
                   >
                     <span>{opt.label}</span>

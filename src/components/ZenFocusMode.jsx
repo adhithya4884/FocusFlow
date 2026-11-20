@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Minimize2, Volume2, VolumeX, Target, Play, Pause, RotateCcw } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { formatSecondsToTime } from '../utils/dateUtils';
+import { AMBIENT_SOUND_OPTIONS } from '../utils/audioEngine';
 
 export default function ZenFocusMode({ timerControl }) {
   const {
@@ -36,14 +37,6 @@ export default function ZenFocusMode({ timerControl }) {
     longBreak: 'LONG BREAK'
   };
 
-  const soundOptions = [
-    { id: 'rain', label: '🌧️ Rain' },
-    { id: 'forest', label: '🌲 Birds' },
-    { id: 'cafe', label: '☕ Cafe' },
-    { id: 'binaural', label: '🧘 40Hz Waves' },
-    { id: 'brown', label: '🌌 Brown Noise' }
-  ];
-
   return (
     <div className="fixed inset-0 z-50 bg-[#070a12] text-white flex flex-col justify-between p-6 sm:p-12 animate-in fade-in duration-300">
       {/* Top Bar in Zen Mode */}
@@ -75,9 +68,9 @@ export default function ZenFocusMode({ timerControl }) {
               onChange={(e) => changeAmbientType(e.target.value)}
               className="bg-transparent text-slate-300 focus:outline-none cursor-pointer"
             >
-              {soundOptions.map((opt) => (
+              {AMBIENT_SOUND_OPTIONS.map((opt) => (
                 <option key={opt.id} value={opt.id} className="bg-slate-900 text-slate-200">
-                  {opt.label}
+                  {opt.shortLabel}
                 </option>
               ))}
             </select>

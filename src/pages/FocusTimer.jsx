@@ -12,6 +12,7 @@ import {
 import { useApp } from '../context/AppContext';
 import CircularTimer from '../components/CircularTimer';
 import TimerControls from '../components/TimerControls';
+import { AMBIENT_SOUND_OPTIONS } from '../utils/audioEngine';
 
 export default function FocusTimer({ timerControl, onOpenTaskModal }) {
   const {
@@ -30,14 +31,6 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
   } = useApp();
 
   const pendingTasks = tasks.filter(t => !t.completed);
-
-  const ambientOptions = [
-    { id: 'rain', label: '🌧️ Rain & Thunder' },
-    { id: 'forest', label: '🌲 Forest Birds' },
-    { id: 'cafe', label: '☕ Cozy Cafe' },
-    { id: 'binaural', label: '🧘 40Hz Focus Waves' },
-    { id: 'brown', label: '🌌 Cosmic Brown Noise' }
-  ];
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-in fade-in duration-300">
@@ -173,11 +166,11 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
             )}
           </button>
           <div>
-            <span className="text-xs font-bold block">
+            <span className="text-xs font-bold block text-slate-900 dark:text-white">
               {isAmbientPlaying ? 'Ambient Sound Playing' : 'Ambient Sound Muted'}
             </span>
-            <span className="text-[10px] text-slate-400">
-              Procedural Web Audio Engine (Rain, Birds, Cafe, 40Hz Waves)
+            <span className="text-[10px] text-slate-500 dark:text-slate-400">
+              Procedural Audio (Rain, Waves, Fire, Clock, Zen Bowl)
             </span>
           </div>
         </div>
@@ -193,7 +186,7 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
                 : 'bg-slate-100 border-slate-200 text-slate-800'
             }`}
           >
-            {ambientOptions.map((opt) => (
+            {AMBIENT_SOUND_OPTIONS.map((opt) => (
               <option key={opt.id} value={opt.id}>
                 {opt.label}
               </option>

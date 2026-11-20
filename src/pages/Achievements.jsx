@@ -53,14 +53,14 @@ export default function Achievements() {
               <Flame className="w-3.5 h-3.5 fill-current" />
               <span>Streak & Gamification Engine</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black tracking-tight">
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
               {streak.current > 0
                 ? `${streak.current} Day Habit Streak Active!`
                 : 'Build Your Daily Habit'}
             </h2>
-            <p className="mt-1 text-xs sm:text-sm text-slate-400 max-w-lg">
+            <p className="mt-1 text-xs sm:text-sm text-slate-600 dark:text-slate-400 max-w-lg">
               Consistency builds greatness. You have unlocked{' '}
-              <span className="font-bold text-purple-400">{totalUnlocked} of {totalBadges}</span> badges ({completionPercentage}% completion).
+              <span className="font-bold text-purple-600 dark:text-purple-400">{totalUnlocked} of {totalBadges}</span> badges ({completionPercentage}% completion).
             </p>
           </div>
 
@@ -78,10 +78,10 @@ export default function Achievements() {
         {/* Overall Badge Progress Bar */}
         <div className="mt-6 pt-4 border-t border-inherit">
           <div className="flex items-center justify-between text-xs mb-1.5 font-medium">
-            <span className="text-slate-400">Mastery Progress</span>
-            <span className="font-mono font-bold text-amber-400">{completionPercentage}%</span>
+            <span className="text-slate-500 dark:text-slate-400">Mastery Progress</span>
+            <span className="font-mono font-bold text-amber-600 dark:text-amber-400">{completionPercentage}%</span>
           </div>
-          <div className="w-full bg-slate-800 rounded-full h-2.5 overflow-hidden">
+          <div className="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2.5 overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-amber-500 via-purple-500 to-indigo-500 rounded-full transition-all duration-500"
               style={{ width: `${completionPercentage}%` }}

@@ -14,24 +14,24 @@ export default function StatCard({
 
   const accentStyles = {
     purple: {
-      bg: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-      badge: 'bg-purple-500/15 text-purple-300'
+      bg: 'bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20',
+      badge: 'bg-purple-100 text-purple-800 border border-purple-200 dark:bg-purple-500/15 dark:text-purple-300 dark:border-purple-500/30'
     },
     indigo: {
-      bg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
-      badge: 'bg-indigo-500/15 text-indigo-300'
+      bg: 'bg-indigo-100 text-indigo-700 border-indigo-200 dark:bg-indigo-500/10 dark:text-indigo-400 dark:border-indigo-500/20',
+      badge: 'bg-indigo-100 text-indigo-800 border border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/30'
     },
     cyan: {
-      bg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-      badge: 'bg-cyan-500/15 text-cyan-300'
+      bg: 'bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500/20',
+      badge: 'bg-cyan-100 text-cyan-800 border border-cyan-200 dark:bg-cyan-500/15 dark:text-cyan-300 dark:border-cyan-500/30'
     },
     emerald: {
-      bg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-      badge: 'bg-emerald-500/15 text-emerald-300'
+      bg: 'bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20',
+      badge: 'bg-emerald-100 text-emerald-800 border border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30'
     },
     amber: {
-      bg: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      badge: 'bg-amber-500/15 text-amber-300'
+      bg: 'bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20',
+      badge: 'bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30'
     }
   };
 
@@ -46,7 +46,7 @@ export default function StatCard({
       }`}
     >
       <div className="flex items-start justify-between">
-        <span className="text-xs font-semibold text-slate-400 tracking-wide uppercase">
+        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 tracking-wide uppercase">
           {title}
         </span>
         {Icon && (
@@ -57,7 +57,7 @@ export default function StatCard({
       </div>
 
       <div className="mt-3 flex items-baseline gap-2">
-        <span className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono">
+        <span className="text-2xl sm:text-3xl font-extrabold tracking-tight font-mono text-slate-900 dark:text-white">
           {value}
         </span>
         {badgeText && (
@@ -68,7 +68,7 @@ export default function StatCard({
       </div>
 
       {subtitle && (
-        <p className="mt-1.5 text-xs text-slate-400">
+        <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
           {subtitle}
         </p>
       )}

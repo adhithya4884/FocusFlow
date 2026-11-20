@@ -105,10 +105,10 @@ export default function TimerControls({
       </div>
 
       {/* Keyboard Shortcuts Hint */}
-      <p className="text-[11px] text-slate-400 text-center">
-        Press <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-[10px]">Space</kbd> to toggle,{' '}
-        <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-[10px]">R</kbd> to reset,{' '}
-        <kbd className="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 text-[10px]">S</kbd> to skip
+      <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+        Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-mono">Space</kbd> to toggle,{' '}
+        <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-mono">R</kbd> to reset,{' '}
+        <kbd className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-mono">S</kbd> to skip
       </p>
     </div>
   );

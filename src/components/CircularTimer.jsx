@@ -115,12 +115,12 @@ export default function CircularTimer({
           </div>
 
           {/* Remaining Time Display */}
-          <div className="font-mono text-5xl sm:text-6xl font-black tracking-tight text-slate-100 dark:text-white drop-shadow-md">
+          <div className="font-mono text-5xl sm:text-6xl font-black tracking-tight text-slate-900 dark:text-white drop-shadow-md">
             {formatSecondsToTime(remainingSeconds)}
           </div>
 
           {/* Session / Cycle Progress Indicator */}
-          <div className="text-xs font-medium text-slate-400 mt-2 flex items-center gap-1.5">
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-purple-500 inline-block"></span>
             <span>
               Session {cycleCount} of {settings.longBreakInterval || 4}
@@ -139,18 +139,18 @@ export default function CircularTimer({
           }`}
         >
           <div className="flex items-center gap-2 truncate mr-2">
-            <Target className="w-4 h-4 text-purple-400 shrink-0" />
-            <span className="font-semibold truncate">
+            <Target className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0" />
+            <span className="font-semibold truncate text-slate-900 dark:text-slate-200">
               {activeTask.title}
             </span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300">
+            <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-purple-100 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30">
               🍅 {activeTask.completedPomodoros}/{activeTask.estimatedPomodoros}
             </span>
             <button
               onClick={() => setActiveTaskId(null)}
-              className="p-1 rounded hover:bg-slate-700/50 text-slate-400 hover:text-slate-200"
+              className="p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700/50 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
               title="Unlink task"
             >
               <X className="w-3.5 h-3.5" />

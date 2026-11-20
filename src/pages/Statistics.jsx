@@ -26,10 +26,10 @@ export default function Statistics() {
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Top Header */}
       <div>
-        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+        <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           Productivity Analytics & Insights
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
           Detailed metrics calculated from your real completed focus sessions
         </p>
       </div>
@@ -84,15 +84,15 @@ export default function Statistics() {
         }`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <History className="w-4 h-4 text-purple-400" />
-          <h3 className="text-sm font-bold tracking-tight">Recent Completed Sessions</h3>
+          <History className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <h3 className="text-sm font-bold tracking-tight text-slate-900 dark:text-white">Recent Completed Sessions</h3>
         </div>
 
         {recentSessions.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-inherit text-slate-400">
+                <tr className="border-b border-inherit text-slate-500 dark:text-slate-400">
                   <th className="pb-3 font-semibold uppercase tracking-wider">Type</th>
                   <th className="pb-3 font-semibold uppercase tracking-wider">Duration</th>
                   <th className="pb-3 font-semibold uppercase tracking-wider">Associated Task</th>
@@ -101,27 +101,27 @@ export default function Statistics() {
               </thead>
               <tbody className="divide-y divide-inherit">
                 {recentSessions.map((s) => (
-                  <tr key={s.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={s.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
                     <td className="py-3">
                       <span
                         className={`px-2 py-0.5 rounded-full font-bold text-[10px] uppercase border ${
                           s.type === 'focus'
-                            ? 'bg-purple-500/15 border-purple-500/30 text-purple-300'
+                            ? 'bg-purple-100 dark:bg-purple-500/15 border-purple-200 dark:border-purple-500/30 text-purple-700 dark:text-purple-300'
                             : s.type === 'shortBreak'
-                            ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300'
-                            : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300'
+                            ? 'bg-cyan-100 dark:bg-cyan-500/15 border-cyan-200 dark:border-cyan-500/30 text-cyan-700 dark:text-cyan-300'
+                            : 'bg-emerald-100 dark:bg-emerald-500/15 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
                         }`}
                       >
                         {s.type === 'focus' ? 'Focus' : s.type === 'shortBreak' ? 'Short Break' : 'Long Break'}
                       </span>
                     </td>
-                    <td className="py-3 font-mono font-semibold">
+                    <td className="py-3 font-mono font-semibold text-slate-900 dark:text-white">
                       {s.durationMinutes}m
                     </td>
-                    <td className="py-3 text-slate-300 truncate max-w-xs">
-                      {s.taskTitle || <span className="text-slate-500 italic">Free Session</span>}
+                    <td className="py-3 text-slate-700 dark:text-slate-300 truncate max-w-xs font-medium">
+                      {s.taskTitle || <span className="text-slate-400 dark:text-slate-500 italic">Free Session</span>}
                     </td>
-                    <td className="py-3 text-right text-slate-400">
+                    <td className="py-3 text-right text-slate-500 dark:text-slate-400 font-mono">
                       {new Date(s.completedAt).toLocaleString('en-US', {
                         month: 'short',
                         day: 'numeric',
