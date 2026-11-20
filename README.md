@@ -23,10 +23,12 @@ FocusFlow empowers students, developers, and professionals to master their focus
 ### 3. Procedural Web Audio Ambient Sound Generator (100% Offline)
 * **Zero External Audio Dependencies:** Generated entirely via native browser oscillators and noise synthesis buffers—no broken external MP3 links, CORS errors, or copyright issues!
 * **Soundscapes:**
-  * 🌧️ *Gentle Rain* (Filtered pink noise with droplet modulation)
-  * 🟤 *Deep Brown Noise* (Low-pass filtered rumble for hyper-focus)
-  * ⚪ *White Noise* (Smooth sound-masking spectrum)
-  * 🧠 *40Hz Gamma Focus Binaural Beats* (Stereo sine oscillation for cognitive stimulation)
+  * 🌧️ *Rain & Thunder* (Velvety dual-filter rainfall, high-frequency raindrop pings & rolling sub-bass thunder)
+  * 🌊 *Ocean Waves* (Deep surging sub-bass swell with 6s rhythmic ebb-and-flow & airy foam wash)
+  * 🔥 *Crackling Campfire* (Cozy low-frequency wood rumble with organic crackle bursts & steam-pop thumps)
+  * ⏰ *Clockwork Pendulum* (Mechanical wooden escapement with crisp dual-click tick/tock resonance)
+  * 🥣 *Tibetan Singing Bowl* (Bronze harmonic series with gentle 0.32Hz rotary acoustic shimmer)
+* **1-Click Global Audio Control:** Instant Play/Stop toggles right from the top Navbar, popup menu, Focus Timer soundbar, and a persistent floating mini audio controller across all pages.
 * **Completion Chimes:** *Zen Singing Bowl*, *Digital Arpeggio*, *Resonant Gong*, and *Wooden Marimba*.
 
 ### 4. Comprehensive Productivity Analytics & Heatmap
