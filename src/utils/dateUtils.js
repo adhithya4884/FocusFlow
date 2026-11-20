@@ -64,7 +64,6 @@ export function calculateStreaks(sessionDates = []) {
     return { current: 0, longest: 0, lastActiveDate: null };
   }
 
-  // Deduplicate and sort dates ascending
   const uniqueDates = [...new Set(sessionDates)].sort();
   const dateSet = new Set(uniqueDates);
 
@@ -73,13 +72,9 @@ export function calculateStreaks(sessionDates = []) {
   yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayStr = getLocalDateString(yesterday);
 
-  // Check if active today or yesterday for current streak
   let currentStreak = 0;
   let checkDate = new Date();
-  let checkStr = getLocalDateString(checkDate);
 
-  // If user completed today, start counting from today
-  // If not completed today, but completed yesterday, streak is still alive!
   if (dateSet.has(today)) {
     currentStreak = 1;
     checkDate.setDate(checkDate.getDate() - 1);
@@ -91,7 +86,6 @@ export function calculateStreaks(sessionDates = []) {
     currentStreak = 0;
   }
 
-  // Count backwards consecutively
   if (currentStreak > 0) {
     while (true) {
       const prevStr = getLocalDateString(checkDate);
@@ -104,7 +98,6 @@ export function calculateStreaks(sessionDates = []) {
     }
   }
 
-  // Calculate longest streak across history
   let longestStreak = 0;
   let tempStreak = 0;
   let prevDateObj = null;
@@ -136,5 +129,98 @@ export function calculateStreaks(sessionDates = []) {
     current: currentStreak,
     longest: Math.max(currentStreak, longestStreak),
     lastActiveDate: uniqueDates[uniqueDates.length - 1] || null
+  };
+}
+
+/**
+ * Calculates detailed streak breakdown for week & month tooltip
+ */
+export function getDetailedStreakStats(sessions = []) {
+  const focusSessions = sessions.filter(s => s.type === 'focus');
+  const sessionDates = focusSessions.map(s => getLocalDateString(new Date(s.completedAt)));
+  const dateSet = new Set(sessionDates);
+  const streak = calculateStreaks(sessionDates);
+
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth(); // 0-indexed
+
+  // 1. THIS WEEK'S BREAKDOWN (Monday to Sunday)
+  const currentDayOfWeek = today.getDay(); // 0 is Sunday, 1 is Monday
+  // Days since Monday: if Sun(0) -> 6, if Mon(1) -> 0, etc.
+  const diffToMonday = currentDayOfWeek === 0 ? 6 : currentDayOfWeek - 1;
+  const mondayDate = new Date(today);
+  mondayDate.setDate(today.getDate() - diffToMonday);
+
+  const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  const fullDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+  let weekActiveCount = 0;
+  let weekFocusMinutes = 0;
+
+  const weekDays = dayLabels.map((label, idx) => {
+    const d = new Date(mondayDate);
+    d.setDate(mondayDate.getDate() + idx);
+    const dStr = getLocalDateString(d);
+    const isActive = dateSet.has(dStr);
+    const isToday = dStr === getLocalDateString(today);
+    const isFuture = d > today && !isToday;
+
+    // Sum focus minutes
+    const daySessions = focusSessions.filter(
+      s => getLocalDateString(new Date(s.completedAt)) === dStr
+    );
+    const dayMinutes = daySessions.reduce((acc, s) => acc + (Number(s.durationMinutes) || 0), 0);
+
+    if (isActive) {
+      weekActiveCount++;
+      weekFocusMinutes += dayMinutes;
+    }
+
+    return {
+      label,
+      fullDay: fullDayNames[idx],
+      dateStr: dStr,
+      dayNum: d.getDate(),
+      isActive,
+      isToday,
+      isFuture,
+      minutes: dayMinutes
+    };
+  });
+
+  // 2. THIS MONTH'S BREAKDOWN
+  const monthName = today.toLocaleString('en-US', { month: 'long' });
+  const totalDaysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  let monthActiveCount = 0;
+  let monthFocusMinutes = 0;
+
+  for (let day = 1; day <= totalDaysInMonth; day++) {
+    const dStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    if (dateSet.has(dStr)) {
+      monthActiveCount++;
+      const daySessions = focusSessions.filter(
+        s => getLocalDateString(new Date(s.completedAt)) === dStr
+      );
+      monthFocusMinutes += daySessions.reduce((acc, s) => acc + (Number(s.durationMinutes) || 0), 0);
+    }
+  }
+
+  const daysElapsedInMonth = today.getDate();
+  const monthConsistencyPercent = Math.round((monthActiveCount / daysElapsedInMonth) * 100);
+
+  return {
+    streak,
+    weekActiveCount,
+    weekDays,
+    weekFocusMinutes,
+    monthName,
+    currentYear,
+    monthActiveCount,
+    totalDaysInMonth,
+    daysElapsedInMonth,
+    monthFocusMinutes,
+    monthConsistencyPercent
   };
 }

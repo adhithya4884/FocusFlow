@@ -14,7 +14,9 @@ import {
   Sparkles,
   CheckCircle2,
   Sun,
-  Moon
+  Moon,
+  Play,
+  Square
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import {
@@ -34,12 +36,26 @@ export default function Settings() {
     handleExportData,
     handleImportData,
     loadDemoData,
-    resetAllData,
-    showToast
+    clearAllData,
+    showToast,
+    isAmbientPlaying,
+    ambientType,
+    changeAmbientType,
+    toggleAmbientSound,
+    ambientVolume,
+    changeAmbientVolume
   } = useApp();
 
   const fileInputRef = useRef(null);
   const [notificationPerm, setNotificationPerm] = useState(getNotificationPermission);
+
+  const ambientOptions = [
+    { id: 'rain', label: '🌧️ Rain & Distant Thunder' },
+    { id: 'forest', label: '🌲 Forest Birds & Breeze' },
+    { id: 'cafe', label: '☕ Cozy Cafe Ambience' },
+    { id: 'binaural', label: '🧘 40Hz Focus Beats & Drone' },
+    { id: 'brown', label: '🌌 Cosmic Brown Noise' }
+  ];
 
   const handleSettingChange = (field, value) => {
     setSettings(prev => ({ ...prev, [field]: value }));
@@ -76,13 +92,12 @@ export default function Settings() {
       }
     };
     reader.readAsText(file);
-    // Reset input
     e.target.value = '';
   };
 
-  const handleResetConfirm = () => {
-    if (window.confirm('Are you sure you want to reset all FocusFlow data? This will clear tasks, sessions, and streaks.')) {
-      resetAllData();
+  const handleClearSampleConfirm = () => {
+    if (window.confirm('Clear all sample tasks, sessions, and streaks to start completely fresh?')) {
+      clearAllData();
     }
   };
 
@@ -93,7 +108,7 @@ export default function Settings() {
           Settings & Preferences
         </h2>
         <p className="text-xs text-slate-400 mt-1">
-          Customize timers, audio alerts, daily targets, and manage your data
+          Customize timers, procedural audio soundscapes, daily targets, and manage sample data
         </p>
       </div>
 
@@ -206,7 +221,87 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* 2. Audio & Notifications */}
+      {/* 2. Procedural Ambient Audio Studio */}
+      <div
+        className={`p-6 rounded-2xl border transition-all ${
+          theme === 'dark'
+            ? 'bg-slate-900/60 border-slate-800'
+            : 'bg-white border-slate-200 shadow-sm'
+        }`}
+      >
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-5 h-5 text-indigo-400" />
+            <h3 className="text-sm font-bold tracking-tight">Procedural Ambient Soundscapes (100% Offline)</h3>
+          </div>
+          <button
+            onClick={toggleAmbientSound}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              isAmbientPlaying
+                ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+            }`}
+          >
+            {isAmbientPlaying ? (
+              <>
+                <Square className="w-3.5 h-3.5 fill-current" />
+                <span>Stop Playing</span>
+              </>
+            ) : (
+              <>
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>Play Selected Sound</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        <p className="text-xs text-slate-400 mb-4">
+          Synthesized directly in your browser using the HTML5 Web Audio API. Each soundscape has its own unique acoustic profile:
+        </p>
+
+        {/* Sound Selection Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
+          {ambientOptions.map((opt) => (
+            <button
+              key={opt.id}
+              onClick={() => {
+                changeAmbientType(opt.id);
+                if (!isAmbientPlaying) toggleAmbientSound();
+              }}
+              className={`p-3 rounded-xl border text-left text-xs font-semibold flex items-center justify-between transition-all ${
+                ambientType === opt.id
+                  ? 'bg-purple-500/15 border-purple-500 text-purple-200 shadow-sm'
+                  : 'border-inherit bg-slate-800/30 text-slate-400 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span>{opt.label}</span>
+              {ambientType === opt.id && isAmbientPlaying && (
+                <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Volume Slider */}
+        <div className="flex items-center gap-4 pt-3 border-t border-inherit">
+          <span className="text-xs text-slate-400 shrink-0">Master Ambient Volume:</span>
+          <input
+            type="range"
+            min="0.05"
+            max="1"
+            step="0.05"
+            value={ambientVolume}
+            onChange={(e) => changeAmbientVolume(parseFloat(e.target.value))}
+            className="flex-1 accent-purple-500 cursor-pointer"
+          />
+          <span className="font-mono text-xs font-bold text-purple-400 w-12 text-right">
+            {Math.round(ambientVolume * 100)}%
+          </span>
+        </div>
+      </div>
+
+      {/* 3. Audio Chimes & Browser Notifications */}
       <div
         className={`p-6 rounded-2xl border transition-all ${
           theme === 'dark'
@@ -215,8 +310,8 @@ export default function Settings() {
         }`}
       >
         <div className="flex items-center gap-2 mb-4">
-          <Volume2 className="w-5 h-5 text-indigo-400" />
-          <h3 className="text-sm font-bold tracking-tight">Audio & Browser Notifications</h3>
+          <Bell className="w-5 h-5 text-purple-400" />
+          <h3 className="text-sm font-bold tracking-tight">Completion Chimes & Notifications</h3>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -224,8 +319,8 @@ export default function Settings() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
-                <span className="text-xs font-semibold block">Session Completion Chime</span>
-                <span className="text-[11px] text-slate-400">Play procedurally synthesized audio alert</span>
+                <span className="text-xs font-semibold block">Session Finish Chime</span>
+                <span className="text-[11px] text-slate-400">Play chime when focus or break concludes</span>
               </div>
               <input
                 type="checkbox"
@@ -239,7 +334,7 @@ export default function Settings() {
               <div className="space-y-3 pt-2">
                 <div>
                   <label className="block text-xs font-semibold text-slate-400 mb-1">
-                    Select Chime Sound
+                    Chime Tone
                   </label>
                   <div className="flex items-center gap-2">
                     <select
@@ -251,7 +346,7 @@ export default function Settings() {
                     >
                       <option value="zen">Zen Singing Bowl</option>
                       <option value="digital">Digital Arpeggio</option>
-                      <option value="gong">Resonant Gong</option>
+                      <option value="gong">Resonant Temple Gong</option>
                       <option value="marimba">Wooden Marimba</option>
                     </select>
 
@@ -323,7 +418,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* 3. Appearance & Goals */}
+      {/* 4. Appearance & Goals */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Appearance */}
         <div
@@ -415,7 +510,7 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* 4. Data Portability & Sandbox Demo Data */}
+      {/* 5. Data Management, Demo Data & Clean Slate */}
       <div
         className={`p-6 rounded-2xl border transition-all ${
           theme === 'dark'
@@ -425,13 +520,33 @@ export default function Settings() {
       >
         <div className="flex items-center gap-2 mb-2">
           <Database className="w-5 h-5 text-cyan-400" />
-          <h3 className="text-sm font-bold tracking-tight">Data Management & Portability</h3>
+          <h3 className="text-sm font-bold tracking-tight">Data Management & Sample Data Controls</h3>
         </div>
         <p className="text-xs text-slate-400 mb-6">
-          Backup your data, import existing JSON files, or populate realistic demo data for testing
+          Backup your data, re-seed November sample sessions for testing, or wipe all sample data clean whenever you want:
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Reload Sample Data */}
+          <button
+            onClick={loadDemoData}
+            className="p-3.5 rounded-xl border border-purple-500/40 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+            title="Populate November sessions, tasks, and streaks to test all features"
+          >
+            <Sparkles className="w-5 h-5 text-purple-400" />
+            <span>Reload Sample Data</span>
+          </button>
+
+          {/* Clear Sample Data (Clean Slate) */}
+          <button
+            onClick={handleClearSampleConfirm}
+            className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
+            title="Wipe sample data to start with an empty clean slate"
+          >
+            <Trash2 className="w-5 h-5 text-rose-400" />
+            <span>Clear Sample Data</span>
+          </button>
+
           {/* Export JSON */}
           <button
             onClick={handleExportData}
@@ -460,25 +575,6 @@ export default function Settings() {
             accept=".json"
             className="hidden"
           />
-
-          {/* Load Demo Data */}
-          <button
-            onClick={loadDemoData}
-            className="p-3.5 rounded-xl border border-purple-500/40 bg-purple-500/10 text-purple-300 hover:bg-purple-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
-            title="Populate 14 days of realistic sessions, tasks, and streaks to test all charts"
-          >
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            <span>Load Demo Data</span>
-          </button>
-
-          {/* Reset All Data */}
-          <button
-            onClick={handleResetConfirm}
-            className="p-3.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 hover:bg-rose-500/20 text-xs font-bold flex flex-col items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95"
-          >
-            <Trash2 className="w-5 h-5 text-rose-400" />
-            <span>Reset All Data</span>
-          </button>
         </div>
       </div>
     </div>

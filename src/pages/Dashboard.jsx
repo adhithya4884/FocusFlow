@@ -16,6 +16,7 @@ import { getTimeGreeting, formatMinutesHuman, formatDisplayDate } from '../utils
 import StatCard from '../components/StatCard';
 import TaskCard from '../components/TaskCard';
 import ActivityHeatmap from '../components/ActivityHeatmap';
+import StreakTooltipCard from '../components/StreakTooltipCard';
 
 export default function Dashboard({ timerControl, onOpenTaskModal }) {
   const {
@@ -107,14 +108,19 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
           badgeText={`${settings.dailyGoalSessions} target`}
         />
 
-        <StatCard
-          title="Current Streak"
-          value={`${aggregateStats.streak.current} Days`}
-          subtitle={`Longest: ${aggregateStats.streak.longest} days`}
-          icon={Flame}
-          accentColor="amber"
-          badgeText="Active"
-        />
+        {/* Current Streak with Interactive Hover Card */}
+        <StreakTooltipCard>
+          <div className="w-full">
+            <StatCard
+              title="Current Streak (Hover)"
+              value={`${aggregateStats.streak.current} Days`}
+              subtitle={`Longest: ${aggregateStats.streak.longest} days • Hover for breakdown`}
+              icon={Flame}
+              accentColor="amber"
+              badgeText="Active"
+            />
+          </div>
+        </StreakTooltipCard>
 
         <StatCard
           title="Completed Tasks"
@@ -127,7 +133,7 @@ export default function Dashboard({ timerControl, onOpenTaskModal }) {
 
       {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left 2 Cols: Activity Heatmap & Quick Action */}
+        {/* Left 2 Cols: Current Month Activity Heatmap */}
         <div className="lg:col-span-2 space-y-6">
           <ActivityHeatmap />
         </div>

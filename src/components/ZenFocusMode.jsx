@@ -37,10 +37,11 @@ export default function ZenFocusMode({ timerControl }) {
   };
 
   const soundOptions = [
-    { id: 'rain', label: 'Rain' },
-    { id: 'brown', label: 'Brown Noise' },
-    { id: 'white', label: 'White Noise' },
-    { id: 'binaural', label: '40Hz Beats' }
+    { id: 'rain', label: '🌧️ Rain' },
+    { id: 'forest', label: '🌲 Birds' },
+    { id: 'cafe', label: '☕ Cafe' },
+    { id: 'binaural', label: '🧘 40Hz Waves' },
+    { id: 'brown', label: '🌌 Brown Noise' }
   ];
 
   return (

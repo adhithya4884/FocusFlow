@@ -32,10 +32,11 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
   const pendingTasks = tasks.filter(t => !t.completed);
 
   const ambientOptions = [
-    { id: 'rain', label: 'Rain' },
-    { id: 'brown', label: 'Brown Noise' },
-    { id: 'white', label: 'White Noise' },
-    { id: 'binaural', label: '40Hz Beats' }
+    { id: 'rain', label: '🌧️ Rain & Thunder' },
+    { id: 'forest', label: '🌲 Forest Birds' },
+    { id: 'cafe', label: '☕ Cozy Cafe' },
+    { id: 'binaural', label: '🧘 40Hz Focus Waves' },
+    { id: 'brown', label: '🌌 Cosmic Brown Noise' }
   ];
 
   return (
@@ -146,7 +147,7 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
         )}
       </div>
 
-      {/* Ambient Soundbar Control */}
+      {/* Overhauled Ambient Soundbar Control */}
       <div
         className={`p-4 rounded-2xl border flex items-center justify-between flex-wrap gap-4 transition-all ${
           theme === 'dark'
@@ -176,7 +177,7 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
               {isAmbientPlaying ? 'Ambient Sound Playing' : 'Ambient Sound Muted'}
             </span>
             <span className="text-[10px] text-slate-400">
-              Procedural Web Audio Engine
+              Procedural Web Audio Engine (Rain, Birds, Cafe, 40Hz Waves)
             </span>
           </div>
         </div>
@@ -186,7 +187,7 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
           <select
             value={ambientType}
             onChange={(e) => changeAmbientType(e.target.value)}
-            className={`px-3 py-1.5 rounded-xl border text-xs focus:outline-none ${
+            className={`px-3 py-1.5 rounded-xl border text-xs font-medium focus:outline-none ${
               theme === 'dark'
                 ? 'bg-slate-800 border-slate-700 text-slate-200'
                 : 'bg-slate-100 border-slate-200 text-slate-800'
@@ -206,7 +207,7 @@ export default function FocusTimer({ timerControl, onOpenTaskModal }) {
             step="0.05"
             value={ambientVolume}
             onChange={(e) => changeAmbientVolume(parseFloat(e.target.value))}
-            className="w-20 accent-purple-500 cursor-pointer"
+            className="w-24 accent-purple-500 cursor-pointer"
             title="Ambient Volume"
           />
         </div>

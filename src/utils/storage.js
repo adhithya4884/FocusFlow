@@ -21,51 +21,161 @@ export const DEFAULT_SETTINGS = {
   soundType: 'zen', // 'zen', 'digital', 'gong', 'marimba'
   soundVolume: 0.7,
   ambientEnabled: false,
-  ambientType: 'rain', // 'rain', 'brown', 'white', 'binaural'
-  ambientVolume: 0.4,
+  ambientType: 'rain', // 'rain', 'forest', 'cafe', 'binaural', 'brown'
+  ambientVolume: 0.45,
   notificationEnabled: false,
   dailyGoalSessions: 4,
   dailyGoalMinutes: 100
 };
 
-export const INITIAL_TASKS = [
-  {
-    id: 'task-1',
-    title: 'Review project requirements & scope',
-    description: 'Go over the project specs and organize main priorities',
-    priority: 'High',
-    category: 'Work',
-    estimatedPomodoros: 2,
-    completedPomodoros: 1,
-    completed: false,
-    dueDate: getLocalDateString(),
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'task-2',
-    title: 'Complete Deep Work Session 1',
-    description: 'Focus solely on the core architecture and features',
-    priority: 'High',
-    category: 'Coding',
-    estimatedPomodoros: 3,
-    completedPomodoros: 0,
-    completed: false,
-    dueDate: getLocalDateString(),
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: 'task-3',
-    title: 'Read documentation & optimize workflow',
-    description: 'Learn new keyboard shortcuts and refine habits',
-    priority: 'Medium',
-    category: 'Study',
-    estimatedPomodoros: 1,
-    completedPomodoros: 0,
-    completed: false,
-    dueDate: '',
-    createdAt: new Date().toISOString()
-  }
-];
+/**
+ * Realistic Default Initial Sample Data
+ * Seeded across November 2026 to immediately test and showcase all charts, streaks, and achievements!
+ */
+export function getInitialSeedData() {
+  const sessions = [];
+  const today = new Date(); // 2026-11-20
+
+  // Active dates in November 2026:
+  // Nov 20 (today), Nov 19, Nov 18, Nov 17, Nov 16 (creating active 5-day streak)
+  // and earlier active days: Nov 14, 13, 11, 10, 9, 8, 6, 5, 4, 3, 2, 1
+  const daysAgoList = [
+    0, 1, 2, 3, 4, // 5-day active streak (Nov 16 - Nov 20)
+    6, 7, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19 // earlier in November
+  ];
+
+  const sampleTasksList = [
+    { id: 'task-arch', title: 'FocusFlow Component Architecture' },
+    { id: 'task-audio', title: 'Procedural Web Audio Engine' },
+    { id: 'task-heat', title: 'Monthly Activity Matrix & Analytics' },
+    { id: 'task-habits', title: 'Productivity Research & Habit Loops' }
+  ];
+
+  daysAgoList.forEach((daysAgo, dayIdx) => {
+    const sDate = new Date(today);
+    sDate.setDate(today.getDate() - daysAgo);
+
+    // Number of sessions per day (2 to 5)
+    const sessionCount = daysAgo === 0 ? 3 : 2 + (daysAgo % 4);
+
+    for (let i = 0; i < sessionCount; i++) {
+      const sTime = new Date(sDate);
+      sTime.setHours(9 + i * 2, 15 + (i * 12) % 45, 0);
+
+      const taskObj = sampleTasksList[(dayIdx + i) % sampleTasksList.length];
+
+      sessions.push({
+        id: `seed-session-${daysAgo}-${i}`,
+        type: 'focus',
+        durationMinutes: 25,
+        completedAt: sTime.toISOString(),
+        taskId: taskObj.id,
+        taskTitle: taskObj.title
+      });
+    }
+
+    // Add a couple of short break logs for distribution chart
+    if (dayIdx % 2 === 0) {
+      const bTime = new Date(sDate);
+      bTime.setHours(11, 45, 0);
+      sessions.push({
+        id: `seed-break-${daysAgo}`,
+        type: 'shortBreak',
+        durationMinutes: 5,
+        completedAt: bTime.toISOString()
+      });
+    }
+  });
+
+  const tasks = [
+    {
+      id: 'task-arch',
+      title: 'FocusFlow Component Architecture',
+      description: 'Implement reusable modular UI components and responsive layout',
+      priority: 'High',
+      category: 'Coding',
+      estimatedPomodoros: 4,
+      completedPomodoros: 4,
+      completed: true,
+      dueDate: getLocalDateString(today),
+      createdAt: new Date(today.getTime() - 86400000 * 5).toISOString()
+    },
+    {
+      id: 'task-audio',
+      title: 'Procedural Web Audio Engine',
+      description: 'Synthesize Rain, Birds, Cafe, and 40Hz Binaural Beats via Web Audio API',
+      priority: 'High',
+      category: 'Coding',
+      estimatedPomodoros: 3,
+      completedPomodoros: 3,
+      completed: true,
+      dueDate: getLocalDateString(today),
+      createdAt: new Date(today.getTime() - 86400000 * 4).toISOString()
+    },
+    {
+      id: 'task-heat',
+      title: 'Monthly Activity Matrix & Analytics',
+      description: 'Calculate real month-to-date metrics, consistency rates, and Recharts charts',
+      priority: 'High',
+      category: 'Coding',
+      estimatedPomodoros: 4,
+      completedPomodoros: 3,
+      completed: false,
+      dueDate: getLocalDateString(today),
+      createdAt: new Date(today.getTime() - 86400000 * 2).toISOString()
+    },
+    {
+      id: 'task-habits',
+      title: 'Productivity Research & Habit Loops',
+      description: 'Study Deep Work frameworks and streak gamification mechanics',
+      priority: 'Medium',
+      category: 'Study',
+      estimatedPomodoros: 2,
+      completedPomodoros: 1,
+      completed: false,
+      dueDate: getLocalDateString(new Date(today.getTime() + 86400000)),
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: 'task-design',
+      title: 'SaaS Theme Tokens & Ambient Glow',
+      description: 'Craft dark theme tokens, glassmorphism cards, and violet glow accents',
+      priority: 'Medium',
+      category: 'Design',
+      estimatedPomodoros: 3,
+      completedPomodoros: 3,
+      completed: true,
+      dueDate: getLocalDateString(today),
+      createdAt: new Date(today.getTime() - 86400000 * 3).toISOString()
+    },
+    {
+      id: 'task-docs',
+      title: 'Project Documentation & Testing Guide',
+      description: 'Complete comprehensive deployment checklist and component architecture',
+      priority: 'Medium',
+      category: 'Work',
+      estimatedPomodoros: 2,
+      completedPomodoros: 0,
+      completed: false,
+      dueDate: getLocalDateString(new Date(today.getTime() + 86400000 * 2)),
+      createdAt: new Date().toISOString()
+    }
+  ];
+
+  const achievements = [
+    { id: 'first_focus', unlockedAt: new Date(today.getTime() - 86400000 * 18).toISOString() },
+    { id: 'consistency', unlockedAt: new Date(today.getTime() - 86400000 * 14).toISOString() },
+    { id: 'deep_worker', unlockedAt: new Date(today.getTime() - 86400000 * 10).toISOString() },
+    { id: 'focus_master', unlockedAt: new Date(today.getTime() - 86400000 * 4).toISOString() },
+    { id: 'habit_builder', unlockedAt: new Date(today.getTime() - 86400000 * 2).toISOString() },
+    { id: 'productivity_champion', unlockedAt: today.toISOString() },
+    { id: 'task_crusher', unlockedAt: new Date(today.getTime() - 86400000 * 3).toISOString() }
+  ];
+
+  return { sessions, tasks, achievements };
+}
+
+export const INITIAL_DATA = getInitialSeedData();
 
 export const storage = {
   get(key, defaultValue = null) {
@@ -120,7 +230,6 @@ export function validateImportData(jsonData) {
     return { valid: false, error: 'Uploaded file is not a valid JSON object.' };
   }
 
-  // Must have at least one recognized key
   const hasRecognizedKey = ['settings', 'tasks', 'sessions', 'achievements'].some(
     k => k in jsonData
   );
@@ -159,100 +268,8 @@ export function exportDataAsJson(data) {
 }
 
 /**
- * Generates realistic Demo Data for portfolio testing
+ * Regenerates Demo Data
  */
 export function generateDemoData() {
-  const sessions = [];
-  const today = new Date();
-
-  // Create 12 days of sessions across the last 14 days (creating a 5-day active streak)
-  const activeDaysAgo = [0, 1, 2, 3, 4, 6, 7, 8, 10, 11, 12, 13];
-
-  activeDaysAgo.forEach(daysAgo => {
-    const sessionDate = new Date();
-    sessionDate.setDate(today.getDate() - daysAgo);
-
-    // Number of sessions for this day (2 to 5)
-    const count = 2 + (daysAgo % 3);
-    for (let i = 0; i < count; i++) {
-      const sTime = new Date(sessionDate);
-      sTime.setHours(9 + i * 2, 15 + i * 10, 0);
-
-      sessions.push({
-        id: `demo-session-${daysAgo}-${i}`,
-        type: 'focus',
-        durationMinutes: 25,
-        completedAt: sTime.toISOString(),
-        taskId: i % 2 === 0 ? 'demo-task-1' : 'demo-task-2',
-        taskTitle: i % 2 === 0 ? 'Frontend Component Architecture' : 'Productivity Research & UI System'
-      });
-    }
-  });
-
-  const tasks = [
-    {
-      id: 'demo-task-1',
-      title: 'Frontend Component Architecture',
-      description: 'Implement reusable UI components and modular layout',
-      priority: 'High',
-      category: 'Coding',
-      estimatedPomodoros: 6,
-      completedPomodoros: 6,
-      completed: true,
-      dueDate: getLocalDateString(today),
-      createdAt: new Date(today.getTime() - 86400000 * 3).toISOString()
-    },
-    {
-      id: 'demo-task-2',
-      title: 'Productivity Research & UI System',
-      description: 'Design dark/light theme tokens and purple glow system',
-      priority: 'Medium',
-      category: 'Design',
-      estimatedPomodoros: 4,
-      completedPomodoros: 4,
-      completed: true,
-      dueDate: getLocalDateString(today),
-      createdAt: new Date(today.getTime() - 86400000 * 4).toISOString()
-    },
-    {
-      id: 'demo-task-3',
-      title: 'High-Precision Timer Engine Verification',
-      description: 'Verify background tab drift prevention with timestamp deltas',
-      priority: 'High',
-      category: 'Coding',
-      estimatedPomodoros: 4,
-      completedPomodoros: 3,
-      completed: false,
-      dueDate: getLocalDateString(today),
-      createdAt: new Date(today.getTime() - 86400000).toISOString()
-    },
-    {
-      id: 'demo-task-4',
-      title: 'Prepare Project Documentation & Testing Checklist',
-      description: 'Write complete deployment steps and architecture notes',
-      priority: 'Medium',
-      category: 'Work',
-      estimatedPomodoros: 2,
-      completedPomodoros: 0,
-      completed: false,
-      dueDate: getLocalDateString(new Date(today.getTime() + 86400000)),
-      createdAt: new Date().toISOString()
-    }
-  ];
-
-  const achievements = [
-    { id: 'first_focus', unlockedAt: new Date(today.getTime() - 86400000 * 13).toISOString() },
-    { id: 'consistency', unlockedAt: new Date(today.getTime() - 86400000 * 10).toISOString() },
-    { id: 'deep_worker', unlockedAt: new Date(today.getTime() - 86400000 * 7).toISOString() },
-    { id: 'focus_master', unlockedAt: new Date(today.getTime() - 86400000 * 2).toISOString() },
-    { id: 'habit_builder', unlockedAt: new Date(today.getTime() - 86400000 * 2).toISOString() },
-    { id: 'productivity_champion', unlockedAt: today.toISOString() },
-    { id: 'task_crusher', unlockedAt: new Date(today.getTime() - 86400000 * 4).toISOString() }
-  ];
-
-  return {
-    sessions,
-    tasks,
-    achievements
-  };
+  return getInitialSeedData();
 }

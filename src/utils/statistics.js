@@ -172,42 +172,94 @@ export function getSessionDistributionData(sessions = []) {
 }
 
 /**
- * Returns focus heatmap grid data for the last 35 days (5 weeks x 7 days)
+ * Current Month Activity Matrix Data:
+ * Renders the full calendar grid for the current month (e.g. November 2026)
+ * with weekday alignment, focus intensity, and monthly summary metrics.
  */
-export function getHeatmapData(sessions = []) {
-  const days = [];
-  const today = new Date();
+export function getCurrentMonthMatrixData(sessions = [], targetDate = new Date()) {
+  const year = targetDate.getFullYear();
+  const month = targetDate.getMonth(); // 0 to 11
+  const monthName = targetDate.toLocaleString('en-US', { month: 'long' });
+  const todayStr = getLocalDateString(new Date());
 
-  // Create lookup for minutes per date
+  // Total days in target month
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  // First day of month weekday (0 = Sun, 1 = Mon, ..., 6 = Sat)
+  const firstDayWeekday = new Date(year, month, 1).getDay();
+  // Monday-first offset: Mon=0, Tue=1, ..., Sun=6
+  const leadingBlanks = firstDayWeekday === 0 ? 6 : firstDayWeekday - 1;
+
+  // Aggregate sessions by date string
+  const sessionsByDate = {};
   const minutesByDate = {};
+
   sessions.forEach(s => {
     if (s.type === 'focus') {
       const dStr = getLocalDateString(new Date(s.completedAt));
+      sessionsByDate[dStr] = (sessionsByDate[dStr] || 0) + 1;
       minutesByDate[dStr] = (minutesByDate[dStr] || 0) + (Number(s.durationMinutes) || 0);
     }
   });
 
-  for (let i = 34; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const dateStr = getLocalDateString(d);
-    const minutes = minutesByDate[dateStr] || 0;
+  let monthTotalMinutes = 0;
+  let monthTotalSessions = 0;
+  let monthActiveDays = 0;
 
-    // Intensity levels from 0 to 4
+  const days = [];
+  const todayObj = new Date();
+
+  for (let day = 1; day <= totalDays; day++) {
+    const dObj = new Date(year, month, day);
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const minutes = minutesByDate[dateStr] || 0;
+    const sessionCount = sessionsByDate[dateStr] || 0;
+    const isToday = dateStr === todayStr;
+    const isFuture = dObj > todayObj && !isToday;
+
+    // Intensity level (0 to 4)
     let intensity = 0;
     if (minutes > 0 && minutes < 25) intensity = 1;
     else if (minutes >= 25 && minutes < 60) intensity = 2;
     else if (minutes >= 60 && minutes < 120) intensity = 3;
     else if (minutes >= 120) intensity = 4;
 
+    if (minutes > 0) {
+      monthTotalMinutes += minutes;
+      monthTotalSessions += sessionCount;
+      monthActiveDays++;
+    }
+
     days.push({
+      dayNumber: day,
       dateStr,
-      formatted: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-      dayOfWeek: d.toLocaleDateString('en-US', { weekday: 'narrow' }),
+      dayOfWeek: dObj.toLocaleDateString('en-US', { weekday: 'short' }),
+      formatted: dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       minutes,
-      intensity
+      sessionsCount: sessionCount,
+      intensity,
+      isToday,
+      isFuture
     });
   }
 
-  return days;
+  // Days elapsed in current month up to today
+  const daysElapsed = Math.min(totalDays, todayObj.getDate());
+  const monthConsistencyRate = daysElapsed > 0 ? Math.round((monthActiveDays / daysElapsed) * 100) : 0;
+
+  return {
+    monthName,
+    year,
+    totalDays,
+    leadingBlanks,
+    days,
+    summary: {
+      totalMinutes: monthTotalMinutes,
+      totalHours: Number((monthTotalMinutes / 60).toFixed(1)),
+      totalSessions: monthTotalSessions,
+      activeDays: monthActiveDays,
+      daysElapsed,
+      consistencyRate: monthConsistencyRate
+    }
+  };
 }

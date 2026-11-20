@@ -16,6 +16,7 @@ import {
   VolumeX
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import StreakTooltipCard from './StreakTooltipCard';
 
 export default function Sidebar() {
   const {
@@ -27,7 +28,8 @@ export default function Sidebar() {
     setIsFocusMode,
     setShortcutsModalOpen,
     isAmbientPlaying,
-    toggleAmbientSound
+    toggleAmbientSound,
+    ambientType
   } = useApp();
 
   const navItems = [
@@ -62,34 +64,37 @@ export default function Sidebar() {
         </div>
       </div>
 
-      {/* Streak Badge Pill */}
+      {/* Streak Badge Pill with Hover Pop-up Card */}
       <div className="px-5 py-4">
-        <div
-          className={`flex items-center justify-between p-3 rounded-xl border ${
-            streak.current > 0
-              ? 'bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-indigo-500/10 border-amber-500/30'
-              : theme === 'dark'
-              ? 'bg-slate-800/50 border-slate-700/50'
-              : 'bg-slate-100/70 border-slate-200'
-          }`}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className={`p-1.5 rounded-lg ${streak.current > 0 ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400'}`}>
-              <Flame className={`w-4 h-4 ${streak.current > 0 ? 'fill-amber-400 animate-bounce' : ''}`} />
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-slate-100 dark:text-slate-200">
-                {streak.current} Day Streak
+        <StreakTooltipCard>
+          <div
+            className={`flex items-center justify-between p-3 rounded-xl border cursor-pointer transition-all hover:scale-[1.02] ${
+              streak.current > 0
+                ? 'bg-gradient-to-r from-amber-500/10 via-purple-500/10 to-indigo-500/10 border-amber-500/30'
+                : theme === 'dark'
+                ? 'bg-slate-800/50 border-slate-700/50'
+                : 'bg-slate-100/70 border-slate-200'
+            }`}
+            title="Hover to view weekly & monthly streak details"
+          >
+            <div className="flex items-center gap-2.5">
+              <div className={`p-1.5 rounded-lg ${streak.current > 0 ? 'bg-amber-500/20 text-amber-400' : 'text-slate-400'}`}>
+                <Flame className={`w-4 h-4 ${streak.current > 0 ? 'fill-amber-400 animate-bounce' : ''}`} />
               </div>
-              <div className="text-[10px] text-slate-400">
-                {streak.current > 0 ? 'Keep the momentum!' : 'Start a session today!'}
+              <div>
+                <div className="text-xs font-semibold text-slate-100 dark:text-slate-200">
+                  {streak.current} Day Streak
+                </div>
+                <div className="text-[10px] text-slate-400">
+                  Hover for details
+                </div>
               </div>
             </div>
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
+              {streak.longest} max
+            </span>
           </div>
-          <span className="text-xs font-mono font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400">
-            {streak.longest} max
-          </span>
-        </div>
+        </StreakTooltipCard>
       </div>
 
       {/* Main Navigation Links */}
@@ -123,14 +128,14 @@ export default function Sidebar() {
       <div className="px-3 py-2">
         <button
           onClick={toggleAmbientSound}
-          className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium border transition-colors ${
+          className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium border transition-colors ${
             isAmbientPlaying
               ? 'bg-purple-500/15 border-purple-500/30 text-purple-300'
               : theme === 'dark'
               ? 'bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200'
               : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900'
           }`}
-          title="Toggle ambient background soundscape (Rain/Binaural)"
+          title="Toggle ambient background soundscape (Rain/Birds/Cafe/Waves)"
         >
           <div className="flex items-center gap-2">
             {isAmbientPlaying ? (
@@ -138,7 +143,19 @@ export default function Sidebar() {
             ) : (
               <VolumeX className="w-4 h-4" />
             )}
-            <span>Ambient Sound</span>
+            <span className="truncate">
+              {isAmbientPlaying
+                ? ambientType === 'rain'
+                  ? '🌧️ Rain Playing'
+                  : ambientType === 'forest'
+                  ? '🌲 Birds Playing'
+                  : ambientType === 'cafe'
+                  ? '☕ Cafe Playing'
+                  : ambientType === 'binaural'
+                  ? '🧘 40Hz Playing'
+                  : '🌌 Cosmic Playing'
+                : 'Ambient Audio'}
+            </span>
           </div>
           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${isAmbientPlaying ? 'bg-purple-500/30 text-purple-200' : 'bg-slate-700/50 text-slate-400'}`}>
             {isAmbientPlaying ? 'ON' : 'OFF'}

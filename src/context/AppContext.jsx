@@ -5,12 +5,12 @@ import {
   storage,
   STORAGE_KEYS,
   DEFAULT_SETTINGS,
-  INITIAL_TASKS,
+  INITIAL_DATA,
   generateDemoData,
   exportDataAsJson,
   validateImportData
 } from '../utils/storage';
-import { calculateStreaks, getLocalDateString } from '../utils/dateUtils';
+import { calculateStreaks, getLocalDateString, getDetailedStreakStats } from '../utils/dateUtils';
 import { calculateAggregateStats } from '../utils/statistics';
 import { evaluateAchievements } from '../utils/achievements';
 import { audioEngine } from '../utils/audioEngine';
@@ -26,18 +26,22 @@ export function AppProvider({ children }) {
     storage.get(STORAGE_KEYS.SETTINGS, DEFAULT_SETTINGS)
   );
 
-  // Tasks state
-  const [tasks, setTasks] = useState(() => storage.get(STORAGE_KEYS.TASKS, INITIAL_TASKS));
+  // Tasks state - preloaded with realistic sample data
+  const [tasks, setTasks] = useState(() =>
+    storage.get(STORAGE_KEYS.TASKS, INITIAL_DATA.tasks)
+  );
 
   // Active Task for Timer
   const [activeTaskId, setActiveTaskId] = useState(null);
 
-  // Completed Sessions Log
-  const [sessions, setSessions] = useState(() => storage.get(STORAGE_KEYS.SESSIONS, []));
+  // Completed Sessions Log - preloaded with November sessions
+  const [sessions, setSessions] = useState(() =>
+    storage.get(STORAGE_KEYS.SESSIONS, INITIAL_DATA.sessions)
+  );
 
-  // Unlocked Achievements
+  // Unlocked Achievements - preloaded with unlocked badges
   const [unlockedAchievements, setUnlockedAchievements] = useState(() =>
-    storage.get(STORAGE_KEYS.ACHIEVEMENTS, [])
+    storage.get(STORAGE_KEYS.ACHIEVEMENTS, INITIAL_DATA.achievements)
   );
 
   // Active UI View / Tab
@@ -52,7 +56,7 @@ export function AppProvider({ children }) {
   // Ambient Sound State
   const [isAmbientPlaying, setIsAmbientPlaying] = useState(false);
   const [ambientType, setAmbientType] = useState(() => settings.ambientType || 'rain');
-  const [ambientVolume, setAmbientVolume] = useState(() => settings.ambientVolume || 0.4);
+  const [ambientVolume, setAmbientVolume] = useState(() => settings.ambientVolume || 0.45);
 
   // In-app Toast message
   const [toast, setToast] = useState(null);
@@ -107,6 +111,11 @@ export function AppProvider({ children }) {
     return calculateStreaks(dates);
   }, [sessions]);
 
+  // Detailed Streak Breakdown for Week & Month Tooltip
+  const detailedStreakStats = useMemo(() => {
+    return getDetailedStreakStats(sessions);
+  }, [sessions]);
+
   // Compute Overall Statistics
   const aggregateStats = useMemo(() => {
     const base = calculateAggregateStats(sessions, tasks, settings.dailyGoalSessions);
@@ -126,7 +135,7 @@ export function AppProvider({ children }) {
         colors: ['#a855f7', '#6366f1', '#06b6d4', '#10b981', '#f59e0b']
       });
     } catch {
-      // Non-blocking if canvas unsupported
+      // Non-blocking
     }
   }, []);
 
@@ -253,7 +262,7 @@ export function AppProvider({ children }) {
   const recordCompletedSession = useCallback((sessionData) => {
     const newSession = {
       id: `session-${Date.now()}`,
-      type: sessionData.type, // 'focus' | 'shortBreak' | 'longBreak'
+      type: sessionData.type,
       durationMinutes: sessionData.durationMinutes,
       completedAt: new Date().toISOString(),
       taskId: sessionData.taskId || null,
@@ -278,21 +287,21 @@ export function AppProvider({ children }) {
     setSessions(demo.sessions);
     setTasks(demo.tasks);
     setUnlockedAchievements(demo.achievements);
-    showToast('Demo data loaded successfully! Explore charts & achievements.', 'success');
+    showToast('Realistic demo data loaded! Explore November activity & analytics.', 'success');
     triggerConfetti();
   }, [showToast, triggerConfetti]);
 
-  // Reset Application Data
-  const resetAllData = useCallback(() => {
+  // Reset / Clear All Sample Data to completely clean state
+  const clearAllData = useCallback(() => {
     storage.clearAll();
     setSettings(DEFAULT_SETTINGS);
-    setTasks(INITIAL_TASKS);
+    setTasks([]);
     setSessions([]);
     setActiveTaskId(null);
     setUnlockedAchievements([]);
     audioEngine.stopAmbient();
     setIsAmbientPlaying(false);
-    showToast('FocusFlow reset to default state.', 'info');
+    showToast('All sample data cleared. Ready for fresh focus sessions!', 'info');
   }, [showToast]);
 
   // Export JSON
@@ -331,7 +340,6 @@ export function AppProvider({ children }) {
     }
   }, [showToast, triggerConfetti]);
 
-  // Current active task object
   const activeTask = useMemo(() => {
     return tasks.find(t => t.id === activeTaskId) || null;
   }, [tasks, activeTaskId]);
@@ -356,6 +364,7 @@ export function AppProvider({ children }) {
         sessions,
         recordCompletedSession,
         streak,
+        detailedStreakStats,
         aggregateStats,
         unlockedAchievements,
         activeTab,
@@ -374,7 +383,7 @@ export function AppProvider({ children }) {
         showToast,
         triggerConfetti,
         loadDemoData,
-        resetAllData,
+        clearAllData,
         handleExportData,
         handleImportData
       }}
